@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KAWAS Coffee | Dashboard Financiero V5</title>
+<title>KAWAS Coffee | Dashboard Financiero V6 - Scroll Fix</title>
 <style>
   :root{
     --bg:#F6F2EC;
@@ -126,11 +126,11 @@
   .section-title h3,.table-head h3{font-size:20px;letter-spacing:-.7px;line-height:1.08;font-weight:800;color:var(--ink)}
   .section-title p,.table-head p{margin-top:5px;color:var(--muted);font-size:13px;line-height:1.45}
   .chart-card{padding:18px}.chart-wrap{height:330px;position:relative;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#fff,var(--surface-2));padding:10px;overflow:hidden}canvas{width:100%;height:100%;display:block}
-  .table-card{overflow:hidden;border-radius:var(--radius);background:var(--surface)}
+  .table-card{overflow:visible;border-radius:var(--radius);background:var(--surface)}
   .table-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,var(--surface-2))}
   .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;white-space:nowrap}
   .pill.red{background:var(--red-soft);color:var(--red);border:1px solid #FDD5D0}.pill.green{background:var(--green-soft);color:var(--green);border:1px solid #B7E6C9}.pill.warn{background:var(--amber-soft);color:var(--amber);border:1px solid #F5D49B}
-  .table-wrap{width:100%;overflow:auto;max-height:72vh;background:#fff;position:relative;overscroll-behavior:contain;scrollbar-color:var(--line-strong) transparent;scrollbar-width:thin}
+  .table-wrap{width:100%;overflow-x:auto;overflow-y:hidden;max-height:none;background:#fff;position:relative;overscroll-behavior-x:contain;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;scrollbar-color:var(--line-strong) transparent;scrollbar-width:thin}
   .table-wrap::-webkit-scrollbar{height:12px;width:12px}.table-wrap::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:999px;border:3px solid #fff}.table-wrap::-webkit-scrollbar-track{background:#fff}
   table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;background:#fff;font-size:12px;line-height:1.35;font-variant-numeric:tabular-nums}
   th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 10px;text-align:right;white-space:nowrap;background:#fff;color:var(--ink);vertical-align:middle}
@@ -148,7 +148,7 @@
   .quick-strip{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.quick-strip a{display:inline-flex;text-decoration:none;color:var(--coffee);background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:999px;padding:8px 11px;font-weight:700;font-size:12px}.quick-strip a:hover{background:var(--sand)}
   ::selection{background:var(--coffee);color:#fff}
   @media(max-width:1220px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}.page-header,.grid2,.kpis,.note-grid{grid-template-columns:1fr}nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.side-note{margin-top:10px}main{padding:18px}.chart-wrap{height:310px}}
-  @media(max-width:720px){nav{grid-template-columns:1fr}.page-header{gap:12px}.hero-card{padding:20px}.compare{grid-template-columns:1fr}.table-head{flex-direction:column;align-items:flex-start}.table-wrap{max-height:76vh}th:first-child,td:first-child{min-width:205px;max-width:225px}.kpi strong{font-size:22px}}
+  @media(max-width:720px){nav{grid-template-columns:1fr}.page-header{gap:12px}.hero-card{padding:20px}.compare{grid-template-columns:1fr}.table-head{flex-direction:column;align-items:flex-start}.table-wrap{max-height:none}th:first-child,td:first-child{min-width:205px;max-width:225px}.kpi strong{font-size:22px}}
   @media print{body{background:#fff}.app{display:block}aside,.controls,.quick-strip,.table-help{display:none}main{padding:0;max-width:none}.panel,.card,.note{box-shadow:none;border:1px solid #ddd;break-inside:avoid}.valuationBox{background:#fff;color:#111}.valuationBox p,.mini b,.big{color:#111}.mini{border-color:#ddd;background:#fff}.table-wrap{max-height:none;overflow:visible}th,td,th:first-child,td:first-child{position:static;box-shadow:none;background:#fff;color:#111}table{font-size:9px}}
 </style>
 </head>
@@ -159,7 +159,7 @@
       <div class="logo" aria-label="Logotipo Kawas Coffee">K</div>
       <div>
         <h1>KAWAS COFFEE</h1>
-        <small>Financial Dashboard v5</small>
+        <small>Financial Dashboard v6</small>
       </div>
     </div>
     <nav aria-label="Navegación principal">
@@ -238,7 +238,7 @@
         <span class="pill warn">Scroll horizontal</span>
       </div>
       <div id="historicalTable" class="table-wrap"></div>
-      <div class="table-help"><span>Tip: usar Shift + rueda del mouse o trackpad para avanzar por años.</span><span>Primera columna fija</span></div>
+      <div class="table-help"><span>Scroll vertical mueve la página; Shift + rueda mueve la tabla en horizontal.</span><span>Primera columna fija</span></div>
     </section>
 
     <section id="ratios" class="card table-card">
@@ -456,8 +456,20 @@ function setCompact(mode){
   document.querySelectorAll('table').forEach(t=>{ t.style.fontSize = mode==='compact'?'10px':'12px'; });
 }
 function scrollToSection(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+function enhanceTableScroll(){
+  document.querySelectorAll('.table-wrap').forEach(wrap=>{
+    wrap.addEventListener('wheel', (event)=>{
+      const hasHorizontalScroll = wrap.scrollWidth > wrap.clientWidth + 2;
+      if(!hasHorizontalScroll) return;
+      if(event.shiftKey && Math.abs(event.deltaY) > Math.abs(event.deltaX)){
+        event.preventDefault();
+        wrap.scrollLeft += event.deltaY;
+      }
+    }, {passive:false});
+  });
+}
 function init(){
-  buildHistorical(); buildRatios(); buildDebt(); buildScoring(); buildValuation(); setKPIs(); drawCharts();
+  buildHistorical(); buildRatios(); buildDebt(); buildScoring(); buildValuation(); setKPIs(); drawCharts(); enhanceTableScroll();
 }
 window.addEventListener('resize', ()=>{ clearTimeout(window.__chartTimer); window.__chartTimer=setTimeout(drawCharts,150); });
 init();
