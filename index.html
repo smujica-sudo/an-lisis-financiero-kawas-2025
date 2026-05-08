@@ -1,2011 +1,509 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kawas Coffee SPA — Análisis Financiero Completo 2014-2025</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kawas Coffee SPA — Análisis Financiero Profesional y Valoración</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
-  --espresso:#1A0A00;--dark:#2C1A0E;--mid:#5C3A1E;--latte:#C08040;
-  --cream:#F8F3EC;--foam:#FDFAF6;--white:#fff;
-  --green:#1A6B3C;--green-lt:#D5F5E3;--green-dk:#0F4023;
-  --red:#8B1A1A;--red-lt:#FAD7D7;
-  --amber:#D4AC0D;--amber-lt:#FEF9E7;
-  --blue:#1A3A6B;--blue-lt:#D6E4F0;
-  --navy:#1B2A47;--slate:#566573;--grey:#ECF0F1;
-  --shadow:0 2px 12px rgba(0,0,0,.08);
-  --radius:10px;
+  --bg:#f6f1e9;--surface:#fffdf9;--surface2:#fbf6ee;--ink:#23160e;--muted:#6f6258;
+  --coffee:#3a2417;--coffee2:#5d3a25;--latte:#b9783f;--cream:#efe2d0;--line:#e5d7c5;
+  --green:#17643a;--greenBg:#e6f4ea;--red:#9b2226;--redBg:#fde2e1;--amber:#a97908;--amberBg:#fff4cc;
+  --blue:#244c7c;--blueBg:#e8f0fb;--purple:#6b3fa0;--shadow:0 10px 30px rgba(43,30,20,.08);
+  --mono:"SFMono-Regular","Consolas","Liberation Mono",monospace;--sans:"Inter","Segoe UI",Roboto,Arial,sans-serif;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f0ebe3;color:#2C1810;font-size:13px;line-height:1.5}
-@media print{
-  body{background:#fff;font-size:11px}
-  .no-print,.nav-bar,.print-btn{display:none!important}
-  .page{display:block!important;padding:0;page-break-after:always}
-  .card{box-shadow:none;border:1px solid #ddd}
-  canvas{max-width:100%}
-  table{font-size:10px}
-}
-/* ─ HEADER ─ */
-.header{background:linear-gradient(135deg,var(--espresso) 0%,var(--dark) 50%,var(--mid) 100%);
-  color:#fff;padding:28px 40px;display:flex;justify-content:space-between;align-items:center;
-  flex-wrap:wrap;gap:16px}
-.header h1{font-size:26px;font-weight:700;letter-spacing:-0.5px}
-.header h2{font-size:13px;opacity:.75;margin-top:4px;font-weight:400}
-.badge{background:var(--latte);color:#fff;padding:3px 12px;border-radius:20px;
-  font-size:11px;font-weight:600;margin-top:6px;display:inline-block}
-.header-right{text-align:right;font-size:12px;opacity:.75;line-height:1.8}
-.print-btn{background:var(--latte);border:none;color:#fff;padding:10px 20px;border-radius:8px;
-  cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;
-  transition:.2s;white-space:nowrap}
-.print-btn:hover{background:var(--amber);transform:translateY(-1px)}
-/* ─ NAV ─ */
-.nav-bar{background:var(--dark);display:flex;overflow-x:auto;border-bottom:3px solid var(--latte);
-  position:sticky;top:0;z-index:100}
-.nav-btn{background:none;border:none;color:rgba(255,255,255,.7);padding:13px 18px;
-  cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap;transition:.2s;
-  border-bottom:3px solid transparent;margin-bottom:-3px}
-.nav-btn:hover,.nav-btn.active{color:#fff;background:var(--mid);border-bottom-color:var(--latte)}
-/* ─ PAGES ─ */
-.page{display:none;padding:24px 32px;max-width:1600px;margin:0 auto;animation:fadeIn .3s}
-.page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-/* ─ CARDS ─ */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:24px}
-.card{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
-  border-left:4px solid var(--latte);transition:.2s;position:relative;overflow:hidden}
-.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
-.card.green{border-left-color:var(--green)}
-.card.red{border-left-color:var(--red)}
-.card.blue{border-left-color:var(--blue)}
-.card.amber{border-left-color:var(--amber)}
-.card.purple{border-left-color:#6C3483}
-.card-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#888;font-weight:700}
-.card-value{font-size:24px;font-weight:700;margin:6px 0 2px;color:var(--dark)}
-.card-value.neg{color:var(--red)}
-.card-sub{font-size:11px;color:#666}
-.card-tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;
-  font-weight:700;margin-top:4px}
-.tag-up{background:var(--green-lt);color:var(--green)}
-.tag-dn{background:var(--red-lt);color:var(--red)}
-.tag-neu{background:var(--amber-lt);color:#806000}
-/* ─ CHARTS ─ */
-.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
-.chart-grid.full{grid-template-columns:1fr}
-.chart-grid.tri{grid-template-columns:1fr 1fr 1fr}
-.chart-box{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-.chart-box h3{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px}
-.chart-box p.sub{font-size:11px;color:#888;margin-bottom:14px}
-.chart-wrap{position:relative}
-.chart-wrap canvas{max-height:300px}
-/* ─ TABLES ─ */
-.tbl-wrap{background:#fff;border-radius:var(--radius);padding:22px;
-  box-shadow:var(--shadow);margin-bottom:22px;overflow-x:auto}
-.tbl-wrap h3{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:14px}
-.tbl-wrap .sub{font-size:11px;color:#888;margin-bottom:12px;margin-top:-10px}
-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:900px}
-thead tr{background:var(--navy)}
-thead th{color:#fff;padding:9px 10px;text-align:right;font-weight:600;white-space:nowrap;font-size:11px}
-thead th:first-child{text-align:left;min-width:220px}
-tbody tr:nth-child(even){background:#f8f9fa}
-tbody tr:hover{background:var(--cream)}
-td{padding:7px 10px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap}
-td:first-child{text-align:left;font-weight:500}
-.sec-row td{background:var(--navy)!important;color:#fff;font-weight:700;font-size:11px;
-  text-transform:uppercase;letter-spacing:.3px}
-.tot-row td{background:var(--cream);font-weight:700;border-top:2px solid var(--latte)}
-.hi-row td{background:var(--green-lt);font-weight:700;color:var(--green-dk)}
-.net-row td{background:var(--dark);color:#fff;font-weight:700;font-size:13px}
-.sub-row td{font-size:10.5px;color:#555;font-style:italic}
-/* Colors */
-.txt-green{color:var(--green);font-weight:700}
-.txt-red{color:var(--red);font-weight:700}
-.txt-amber{color:#806000;font-weight:700}
-.neg{color:var(--red)}
-.pos{color:var(--green)}
-.nd{color:#bbb;font-style:italic;text-align:center!important}
-/* ─ SECTIONS ─ */
-.section-title{font-size:16px;font-weight:700;color:var(--dark);margin:0 0 4px}
-.section-sub{font-size:12px;color:#888;margin-bottom:20px}
-.divider{border:none;border-top:2px solid var(--cream);margin:24px 0}
-/* ─ CFA COMMENTARY ─ */
-.commentary{background:#fff;border-radius:var(--radius);padding:22px;
-  box-shadow:var(--shadow);margin-bottom:20px}
-.commentary h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:10px;
-  padding-bottom:6px;border-bottom:2px solid var(--cream)}
-.insight{display:flex;gap:12px;margin-bottom:10px;padding:10px;
-  border-radius:6px;background:var(--foam)}
-.insight-icon{font-size:20px;flex-shrink:0;margin-top:2px}
-.insight strong{display:block;font-size:12px;color:var(--dark);margin-bottom:2px}
-.insight p{font-size:11.5px;color:#555;line-height:1.5}
-/* ─ TRAFFIC LIGHTS ─ */
-.traffic{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:12px;margin-bottom:20px}
-.tl-item{background:#fff;border-radius:8px;padding:14px;box-shadow:var(--shadow);
-  display:flex;align-items:center;gap:10px}
-.tl-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.tl-dot.green{background:var(--green)}
-.tl-dot.amber{background:var(--amber)}
-.tl-dot.red{background:var(--red)}
-.tl-label{font-size:12px;font-weight:600;color:var(--dark)}
-.tl-val{font-size:11px;color:#666}
-/* ─ PROJECTIONS ─ */
-.proj-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
-.proj-card{border-radius:var(--radius);padding:20px;text-align:center}
-.proj-card.bear{background:var(--red-lt);border:2px solid var(--red)}
-.proj-card.base{background:var(--green-lt);border:2px solid var(--green)}
-.proj-card.bull{background:var(--amber-lt);border:2px solid var(--amber)}
-.proj-card h4{font-size:13px;font-weight:700;margin-bottom:8px}
-.proj-card .big{font-size:22px;font-weight:700;margin:8px 0}
-/* ─ VALUATION ─ */
-.val-method{background:#fff;border-radius:var(--radius);padding:20px;
-  box-shadow:var(--shadow);margin-bottom:16px;border-left:5px solid var(--latte)}
-.val-method h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:6px}
-.val-method .range{font-size:20px;font-weight:700;color:var(--green);margin:8px 0}
-
-/* ─ EXPANDABLE EERR ─ */
-.exp-btn{background:none;border:1px solid rgba(255,255,255,.3);
-  color:rgba(255,255,255,.9);cursor:pointer;padding:2px 7px;border-radius:4px;
-  font-size:11px;margin-right:6px;transition:.15s;line-height:1}
-.exp-btn:hover{background:rgba(255,255,255,.2)}
-.grp-btn{background:none;border:1px solid currentColor;cursor:pointer;
-  padding:1px 5px;border-radius:4px;font-size:10px;margin-right:5px;
-  opacity:.7;transition:.15s}
-.grp-btn:hover{opacity:1}
-.detail-group{display:none}
-.detail-group.open{display:table-row-group}
-.detail-row td{background:#f7f9fc!important;font-size:11px;color:#444;border-bottom:1px solid #edf0f3}
-.detail-row td:first-child{padding-left:32px!important;font-style:italic;color:#555}
-.grp-header td{font-size:11px;font-weight:700;padding:5px 10px 5px 24px!important}
-.grp-personal  td{background:#EBF5FB!important;color:#1A3A6B}
-.grp-ocupacion td{background:#E8F8F5!important;color:#0E6655}
-.grp-logistica td{background:#F4ECF7!important;color:#6C3483}
-.grp-comercial td{background:#FEF9E7!important;color:#806000}
-.grp-admin     td{background:#F2F3F4!important;color:#2C3E50}
-.grp-noop      td{background:#FDEDEC!important;color:#7B241C}
-.row-expandable td:first-child{cursor:pointer;user-select:none}
-.row-expandable td:first-child:hover{text-decoration:underline}
-.det-nd{color:#bbb!important;font-style:italic;text-align:center}
-.exp-legend{font-size:10.5px;color:#888;padding:8px 0 14px;display:flex;gap:16px;flex-wrap:wrap}
-.exp-legend span{display:flex;align-items:center;gap:4px}
-.exp-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-
-/* ─ RESPONSIVE ─ */
-@media(max-width:900px){
-  .chart-grid{grid-template-columns:1fr}
-  .chart-grid.tri{grid-template-columns:1fr}
-  .proj-cards{grid-template-columns:1fr}
-  .page{padding:14px}
-  .header{padding:16px}
-  .header h1{font-size:20px}
-}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45}button{font-family:inherit}
+.app{min-height:100vh}.side{position:fixed;top:0;left:0;width:286px;height:100vh;background:linear-gradient(180deg,var(--coffee),#1e120c);color:#fff;padding:24px 18px;overflow:auto;z-index:1000;transform:translateX(0);transition:width .24s ease,padding .24s ease,box-shadow .24s ease;box-shadow:18px 0 40px rgba(35,22,14,.18)}body.sidebar-collapsed .side{width:72px;padding:18px 10px;overflow:hidden}.side-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.16);padding-bottom:18px;margin-bottom:18px}.drawer-toggle{border:1px solid rgba(255,255,255,.20);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;width:40px;height:40px;min-width:40px;padding:0;box-shadow:none;cursor:pointer;font-weight:800;display:flex;align-items:center;justify-content:center;transition:background .18s ease,transform .18s ease}.drawer-toggle:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}.drawer-toggle .ico{font-size:17px;line-height:1}.drawer-toggle .txt{display:none}body.sidebar-collapsed .brand h1,body.sidebar-collapsed .brand small,body.sidebar-collapsed .side-foot{display:none}body.sidebar-collapsed .side-top{justify-content:center;border-bottom:0;margin-bottom:20px;padding-bottom:0}body.sidebar-collapsed .nav button{font-size:0;padding:12px 0;text-align:center}body.sidebar-collapsed .nav button::first-letter{font-size:0}body.sidebar-collapsed .nav button::before{content:'•';font-size:18px;color:#e6d9ca}body.sidebar-collapsed .nav button.active::before{color:#fff}.drawer-backdrop{position:fixed;inset:0;background:rgba(35,22,14,.26);z-index:900;display:none}body.drawer-overlay .drawer-backdrop{display:block}.side-close{display:none;position:absolute;top:16px;right:16px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:white;border-radius:999px;width:34px;height:34px;cursor:pointer;font-size:16px}.brand{border-bottom:1px solid rgba(255,255,255,.16);padding-bottom:18px;margin-bottom:18px}.brand h1{margin:0;font-size:24px;letter-spacing:-.04em}.brand small{display:block;margin-top:6px;color:#d7c2ab;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.nav{display:flex;flex-direction:column;gap:6px}.nav button{border:0;background:transparent;color:#e6d9ca;text-align:left;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px}.nav button:hover,.nav button.active{background:rgba(255,255,255,.11);color:#fff}.side-foot{margin-top:24px;font-size:11px;color:#bda996;line-height:1.6}
+.main{min-width:0;padding:28px 32px 60px;margin-left:286px;transition:margin-left .24s ease}body.sidebar-collapsed .main{margin-left:72px}.hero{background:linear-gradient(135deg,var(--surface),#fff);border:1px solid var(--line);border-radius:24px;padding:26px 28px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:22px;align-items:flex-start;margin-bottom:22px}.hero h2{margin:0 0 8px;font-size:30px;letter-spacing:-.045em}.hero p{margin:0;color:var(--muted);max-width:900px}.hero-meta{text-align:right;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;min-width:220px}.pill{display:inline-flex;gap:7px;align-items:center;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:5px 10px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.page{display:none;animation:fade .18s ease}.page.active{display:block}@keyframes fade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+.section-title{margin:24px 0 12px;display:flex;align-items:end;justify-content:space-between;gap:16px}.section-title h3{margin:0;font-size:18px;letter-spacing:-.02em}.section-title p{margin:4px 0 0;color:var(--muted);font-size:12px}.grid{display:grid;gap:16px}.grid.kpi{grid-template-columns:repeat(4,minmax(0,1fr))}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);min-width:0}.card.compact{padding:14px}.kpi-card{position:relative;overflow:hidden}.kpi-card:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--latte)}.kpi-card.good:before{background:var(--green)}.kpi-card.warn:before{background:var(--amber)}.kpi-card.bad:before{background:var(--red)}.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}.kpi-value{font-size:26px;letter-spacing:-.04em;font-weight:800;margin:6px 0;color:var(--coffee)}.kpi-sub{font-size:12px;color:var(--muted)}.tag{display:inline-block;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}.tag.good{background:var(--greenBg);color:var(--green)}.tag.warn{background:var(--amberBg);color:var(--amber)}.tag.bad{background:var(--redBg);color:var(--red)}.tag.info{background:var(--blueBg);color:var(--blue)}
+.note{border:1px solid var(--line);background:var(--surface2);border-left:5px solid var(--latte);border-radius:14px;padding:14px 16px;margin-bottom:16px;color:#4c3d32}.note.good{border-left-color:var(--green);background:var(--greenBg)}.note.warn{border-left-color:var(--amber);background:var(--amberBg)}.note.bad{border-left-color:var(--red);background:var(--redBg)}.note h4{margin:0 0 8px;font-size:14px}.note p{margin:0 0 8px}.note ul{margin:8px 0 0 18px;padding:0}.note li{margin:3px 0}
+.card.chart{height:390px;display:flex;flex-direction:column;overflow:hidden}.card.chart.small{height:320px}.card.chart h4{flex:0 0 auto;margin:0 0 12px}.card.chart canvas{display:block!important;width:100%!important;height:calc(100% - 34px)!important;max-height:calc(100% - 34px)!important;flex:1 1 auto;min-height:0}.chart{height:auto}.chart.small{height:auto}.table-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}.table-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:15px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,var(--surface2))}.table-head h4{margin:0;font-size:14px}.table-head small{color:var(--muted)}.table-actions{display:flex;gap:8px;flex-wrap:wrap}.mini-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;color:var(--coffee);cursor:pointer;font-size:11px}.mini-btn:hover{background:var(--cream)}.table-scroll{overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch}.table-scroll:focus{outline:2px solid var(--latte);outline-offset:-2px}table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:980px}th,td{padding:9px 10px;border-bottom:1px solid #eee5d9;text-align:right;white-space:nowrap}th{position:sticky;top:0;z-index:2;background:var(--coffee);color:white;font-weight:700}th:first-child,td:first-child{text-align:left;position:sticky;left:0;z-index:1}th:first-child{z-index:3;background:var(--coffee)}td:first-child{background:inherit;font-weight:700;min-width:260px}tbody tr:nth-child(even){background:#fbf8f4}tbody tr:nth-child(odd){background:#fff}tbody tr:hover{background:#f4eadf}.sec td{background:var(--coffee)!important;color:#fff;text-transform:uppercase;font-weight:800;letter-spacing:.04em}.total td{background:var(--cream)!important;font-weight:800}.hi td{background:var(--greenBg)!important;color:var(--green);font-weight:800}.net td{background:#2a1a11!important;color:#fff;font-weight:900}.subrow{display:none}.subrow.open{display:table-row}.subrow td{font-size:11px;color:#66584e;font-style:italic}.catrow{display:none}.catrow.open{display:table-row}.catrow td{background:#f4eadf!important;font-weight:800;color:var(--coffee)}.itemrow{display:none}.itemrow.open{display:table-row}.itemrow td{font-size:11px;color:#6d5e53}.exp{border:0;background:transparent;color:var(--latte);font-weight:900;cursor:pointer;margin-right:6px}.pos{color:var(--green);font-weight:800}.neg{color:var(--red);font-weight:800}.muted{color:var(--muted)}.nd{color:#aaa;font-style:italic}.mono{font-family:var(--mono)}
+.score{font-size:28px;font-weight:900;letter-spacing:-.04em}.score.good{color:var(--green)}.score.warn{color:var(--amber)}.score.bad{color:var(--red)}.valuation-band{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}.price{font-size:34px;font-weight:900;letter-spacing:-.05em;color:var(--coffee)}.range{font-family:var(--mono);color:var(--muted)}.risk-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.risk{padding:11px;border-radius:12px;background:var(--surface2);border:1px solid var(--line)}.risk b{display:block;margin-bottom:4px}.print-only{display:none}
+@media(max-width:1100px){body:not(.sidebar-open) .side{transform:translateX(-100%)}body.sidebar-open .side{transform:translateX(0);width:286px;padding:24px 18px;overflow:auto}body.sidebar-open .brand h1,body.sidebar-open .brand small,body.sidebar-open .side-foot{display:block}body.sidebar-open .side-top{justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.16);margin-bottom:18px;padding-bottom:18px}body.sidebar-open .nav button{font-size:13px;padding:10px 12px;text-align:left}body.sidebar-open .nav button::before{content:none}body.sidebar-open .drawer-backdrop{display:block}.side{box-shadow:18px 0 44px rgba(35,22,14,.32)}.side-close{display:block}.drawer-toggle .txt{display:none}.nav{display:flex}.main{margin-left:0;padding:18px}.grid.kpi,.grid.two,.grid.three,.valuation-band,.risk-list{grid-template-columns:1fr}.hero{display:block}.hero-meta{text-align:left;margin-top:16px}.chart{height:260px}}
+@media print{body{background:#fff}.app{display:block}.side,.no-print,.mini-btn,.drawer-toggle,.drawer-backdrop{display:none!important}.main{padding:0;margin-left:0}.page{display:block!important;page-break-after:always}.hero,.card,.table-card,.note{box-shadow:none;border:1px solid #ddd}.chart{height:240px}.subrow,.catrow,.itemrow{display:table-row!important}.print-only{display:block}}
 </style>
 </head>
 <body>
-
-
-<header class="header">
-  <div>
-    <h1>☕ Kawas Coffee SPA</h1>
-    <h2>Análisis Financiero Exhaustivo — CFA Level  |  RUT 76.324.576-4</h2>
-    <span class="badge">2014 – 2025  ·  11 Ejercicios  ·  CLP</span>
-  </div>
-  <div class="header-right">
-    Walter Scott #1667 Dpto. P7, Santiago<br>
-    Importación Café Verde  ·  Servicios de Cafetería<br>
-    Rep. Legal: Roberto Emilio Yany Stacchetti<br>
-    <button class="print-btn" onclick="window.print()">⬇ Descargar PDF</button>
-  </div>
-</header>
-
-<nav class="nav-bar">
-  <button class="nav-btn active" onclick="show('dashboard')">📊 Dashboard</button>
-  <button class="nav-btn" onclick="show('eerr')">📋 EERR</button>
-  <button class="nav-btn" onclick="show('balance')">🏛 Balance</button>
-  <button class="nav-btn" onclick="show('cashflow')">💧 Flujo Caja</button>
-  <button class="nav-btn" onclick="show('ratios')">📐 Ratios</button>
-  <button class="nav-btn" onclick="show('graficos')">📈 Gráficos</button>
-  <button class="nav-btn" onclick="show('proyecciones')">🔮 Proyecciones</button>
-  <button class="nav-btn" onclick="show('valoracion')">💰 Valoración</button>
-  <button class="nav-btn" onclick="show('cfa_notes')">🎓 Notas CFA</button>
-</nav>
-
-
-<div id="page-dashboard" class="page active">
-  <p class="section-title" style="margin-top:6px">Dashboard Ejecutivo — Kawas Coffee SPA</p>
-  <p class="section-sub">Indicadores clave de desempeño 2025 vs histórico  ·  Semáforo de salud financiera</p>
-
-  <!-- KPI CARDS -->
-  <div class="cards" id="kpi-cards"></div>
-
-  <!-- TRAFFIC LIGHTS -->
-  <div style="margin-bottom:14px">
-    <strong style="font-size:12px;color:var(--dark)">🚦 Semáforo de Salud Financiera — Año 2025</strong>
-  </div>
-  <div class="traffic" id="traffic-lights"></div>
-
-  <!-- MAIN CHART -->
-  <div class="chart-grid full">
-    <div class="chart-box">
-      <h3>Evolución de Ingresos, EBITDA y Utilidad Neta (CLP Millones)</h3>
-      <p class="sub">Barras = Ingresos · Línea naranja = EBITDA · Línea verde = Utilidad Neta</p>
-      <div class="chart-wrap"><canvas id="c-main" height="80"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>Evolución de Márgenes (%)</h3>
-      <p class="sub">Margen Bruto · EBITDA · EBIT · Neto</p>
-      <div class="chart-wrap"><canvas id="c-margins" height="110"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Estructura de Costos 2025</h3>
-      <p class="sub">Distribución de ingresos por categoría</p>
-      <div class="chart-wrap" style="max-width:400px;margin:auto"><canvas id="c-costs2025" height="130"></canvas></div>
-    </div>
-  </div>
-</div>
-
-
-<div id="page-eerr" class="page">
-  <p class="section-title">Estado de Resultados Comparativo 2014–2025</p>
-  <p class="section-sub">Cifras en CLP · Gastos en negativo · Fuente: Balances Tributarios y EERR oficiales</p>
-
-  <div class="tbl-wrap">
-    <h3>Estado de Resultados (CLP)</h3>
-    <p class="sub">Valores en CLP absolutos. (Parentésis) = pérdida o gasto. N/D = sin datos disponibles.</p>
-    <table>
-      <thead><tr id="eerr-hdr"></tr></thead>
-      <tbody id="eerr-body"></tbody>
-    </table>
-  </div>
-
-  <div class="tbl-wrap">
-    <h3>Márgenes Clave (%)</h3>
-    <table>
-      <thead><tr id="margin-hdr"></tr></thead>
-      <tbody id="margin-body"></tbody>
-    </table>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>Ingresos vs Costo de Ventas (CLP M)</h3>
-      <p class="sub">Evolución comparativa</p>
-      <div class="chart-wrap"><canvas id="c-rev-cogs" height="110"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Crecimiento Interanual Ingresos (%)</h3>
-      <p class="sub">Variación YoY porcentual</p>
-      <div class="chart-wrap"><canvas id="c-yoy" height="110"></canvas></div>
-    </div>
-  </div>
-</div>
-
-
-<div id="page-balance" class="page">
-  <p class="section-title">Balance General Comparativo 2014–2025</p>
-  <p class="section-sub">Cifras en CLP · Al 31 de Diciembre de cada ejercicio · 2017: pasivos negativos = neto IVA CF>DF</p>
-
-  <div class="tbl-wrap">
-    <h3>Balance General (CLP)</h3>
-    <table>
-      <thead><tr id="bs-hdr"></tr></thead>
-      <tbody id="bs-body"></tbody>
-    </table>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>Composición del Activo (CLP M)</h3>
-      <p class="sub">Activos corrientes vs no corrientes</p>
-      <div class="chart-wrap"><canvas id="c-assets" height="110"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Estructura de Financiamiento (CLP M)</h3>
-      <p class="sub">Pasivos corrientes · LP · Patrimonio</p>
-      <div class="chart-wrap"><canvas id="c-liab" height="110"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>Masas Patrimoniales — Balance Visual</h3>
-      <p class="sub">Activos = Pasivos + Patrimonio (últimos 5 años)</p>
-      <div class="chart-wrap"><canvas id="c-patrimonial" height="130"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Evolución del Patrimonio Neto (CLP M)</h3>
-      <p class="sub">Capital propio a lo largo del tiempo</p>
-      <div class="chart-wrap"><canvas id="c-equity" height="130"></canvas></div>
-    </div>
-  </div>
-</div>
-
-
-<div id="page-cashflow" class="page">
-  <p class="section-title">Flujo de Caja — Estado de Efectivo</p>
-  <p class="section-sub">Método indirecto construido desde variaciones de Balance  ·  CLP</p>
-
-  <div class="tbl-wrap">
-    <h3>Flujo de Efectivo (CLP)</h3>
-    <p class="sub">Estimado desde variaciones de balance. Diferencias pueden existir por revalorizaciones patrimoniales.</p>
-    <table>
-      <thead><tr id="cf-hdr"></tr></thead>
-      <tbody id="cf-body"></tbody>
-    </table>
-  </div>
-
-  <div class="tbl-wrap">
-    <h3>Free Cash Flow (FCF) — Análisis CFA</h3>
-    <table>
-      <thead><tr id="fcf-hdr"></tr></thead>
-      <tbody id="fcf-body"></tbody>
-    </table>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>EBITDA vs CAPEX (CLP M)</h3>
-      <p class="sub">Capacidad de generación vs inversión</p>
-      <div class="chart-wrap"><canvas id="c-ebitda-capex" height="110"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Evolución del Efectivo en Balance (CLP M)</h3>
-      <p class="sub">Caja disponible al cierre de cada ejercicio</p>
-      <div class="chart-wrap"><canvas id="c-cash" height="110"></canvas></div>
-    </div>
-  </div>
-</div>
-
-
-<div id="page-ratios" class="page">
-  <p class="section-title">Análisis de Ratios Financieros — CFA Standard</p>
-  <p class="section-sub">30+ indicadores · Rentabilidad · Liquidez · Eficiencia · Solvencia · Cobertura</p>
-
-  <div class="tbl-wrap">
-    <h3>I. Ratios de Rentabilidad (Profitability)</h3>
-    <table>
-      <thead><tr id="prof-hdr"></tr></thead>
-      <tbody id="prof-body"></tbody>
-    </table>
-  </div>
-
-  <div class="tbl-wrap">
-    <h3>II. Ratios de Liquidez (Liquidity)</h3>
-    <table>
-      <thead><tr id="liq-hdr"></tr></thead>
-      <tbody id="liq-body"></tbody>
-    </table>
-  </div>
-
-  <div class="tbl-wrap">
-    <h3>III. Ratios de Eficiencia / Actividad (Activity)</h3>
-    <table>
-      <thead><tr id="act-hdr"></tr></thead>
-      <tbody id="act-body"></tbody>
-    </table>
-  </div>
-
-  <div class="tbl-wrap">
-    <h3>IV. Ratios de Solvencia / Apalancamiento (Leverage)</h3>
-    <table>
-      <thead><tr id="lev-hdr"></tr></thead>
-      <tbody id="lev-body"></tbody>
-    </table>
-  </div>
-
-  <div class="tbl-wrap">
-    <h3>V. Descomposición DuPont del ROE (3 y 5 Factores)</h3>
-    <table>
-      <thead><tr id="dup-hdr"></tr></thead>
-      <tbody id="dup-body"></tbody>
-    </table>
-  </div>
-
-  <div class="chart-grid tri">
-    <div class="chart-box">
-      <h3>Liquidez</h3>
-      <div class="chart-wrap"><canvas id="c-liq" height="140"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Ciclo de Conversión</h3>
-      <div class="chart-wrap"><canvas id="c-ccc" height="140"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Apalancamiento</h3>
-      <div class="chart-wrap"><canvas id="c-lev" height="140"></canvas></div>
-    </div>
-  </div>
-</div>
-
-
-<div id="page-graficos" class="page">
-  <p class="section-title">Análisis Gráfico Comprehensivo</p>
-  <p class="section-sub">Visualización completa de la evolución financiera 2014–2025</p>
-
-  <div class="chart-grid full">
-    <div class="chart-box">
-      <h3>Cascada EBITDA 2025 — Bridge de Márgenes</h3>
-      <p class="sub">Composición del resultado desde ingresos hasta utilidad neta</p>
-      <div class="chart-wrap"><canvas id="c-bridge" height="70"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>ROA y ROE Histórico (%)</h3>
-      <p class="sub">Retorno sobre activos y patrimonio</p>
-      <div class="chart-wrap"><canvas id="c-roe-roa" height="110"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Deuda Neta / EBITDA (veces)</h3>
-      <p class="sub">Cobertura de deuda — indicador de solvencia</p>
-      <div class="chart-wrap"><canvas id="c-debt-ebitda" height="110"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>Ciclo de Conversión de Efectivo (días)</h3>
-      <p class="sub">DSO + DIO – DPO</p>
-      <div class="chart-wrap"><canvas id="c-ccc2" height="110"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Capital de Trabajo Neto (CLP M)</h3>
-      <p class="sub">Activos corrientes – Pasivos corrientes</p>
-      <div class="chart-wrap"><canvas id="c-nwc" height="110"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>Distribución Costos 2025 (% Ingresos)</h3>
-      <p class="sub">Estructura detallada del gasto</p>
-      <div class="chart-wrap"><canvas id="c-cost-pie" height="150"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Análisis Vertical EERR (Common Size %)</h3>
-      <p class="sub">Cada línea como % de ingresos — selección años clave</p>
-      <div class="chart-wrap"><canvas id="c-common-size" height="150"></canvas></div>
-    </div>
-  </div>
-</div>
-
-
-<div id="page-proyecciones" class="page">
-  <p class="section-title">Proyecciones Financieras 2026–2030</p>
-  <p class="section-sub">Tres escenarios: Conservador · Base · Optimista  ·  Basado en tendencias históricas y factores macro</p>
-
-  <div class="commentary" style="border-left:4px solid var(--amber);background:var(--amber-lt)">
-    <h4>⚠ Supuestos de Proyección</h4>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:11.5px">
-      <div><strong>Escenario Conservador (5% crecimiento)</strong><br>Desaceleración significativa. Alta competencia, presión de costos. Márgenes bajo presión. COGS/Ingresos se mantiene en 62%.</div>
-      <div><strong>Escenario Base (15% crecimiento)</strong><br>Continuación de tendencia reciente moderada. Recuperación de márgenes post-2024. COGS/Ingresos mejora a 58% por escala.</div>
-      <div><strong>Escenario Optimista (25% crecimiento)</strong><br>Expansión agresiva de clientes y canales. Mejora de eficiencias operativas. COGS/Ingresos 55%. Expansión regional.</div>
-    </div>
-  </div>
-
-  <div class="proj-cards">
-    <div class="proj-card bear">
-      <h4>🐻 Conservador</h4>
-      <div>CAGR 2025-30: <strong>5%</strong></div>
-      <div class="big" style="color:var(--red)">$1,703M</div>
-      <div style="font-size:11px">Ingresos proyectados 2030</div>
-      <hr style="margin:8px 0">
-      <div style="font-size:11px">EBITDA 2030: <strong>$156M</strong></div>
-      <div style="font-size:11px">Margen EBITDA: <strong>9.2%</strong></div>
-    </div>
-    <div class="proj-card base">
-      <h4>📊 Base (Recomendado)</h4>
-      <div>CAGR 2025-30: <strong>15%</strong></div>
-      <div class="big" style="color:var(--green)">$2,687M</div>
-      <div style="font-size:11px">Ingresos proyectados 2030</div>
-      <hr style="margin:8px 0">
-      <div style="font-size:11px">EBITDA 2030: <strong>$349M</strong></div>
-      <div style="font-size:11px">Margen EBITDA: <strong>13.0%</strong></div>
-    </div>
-    <div class="proj-card bull">
-      <h4>🚀 Optimista</h4>
-      <div>CAGR 2025-30: <strong>25%</strong></div>
-      <div class="big" style="color:#806000">$4,076M</div>
-      <div style="font-size:11px">Ingresos proyectados 2030</div>
-      <hr style="margin:8px 0">
-      <div style="font-size:11px">EBITDA 2030: <strong>$642M</strong></div>
-      <div style="font-size:11px">Margen EBITDA: <strong>15.7%</strong></div>
-    </div>
-  </div>
-
-  <div class="tbl-wrap">
-    <h3>Proyección Detallada — Escenario Base (CLP Millones)</h3>
-    <table>
-      <thead><tr id="proj-hdr"></tr></thead>
-      <tbody id="proj-body"></tbody>
-    </table>
-  </div>
-
-  <div class="chart-grid full">
-    <div class="chart-box">
-      <h3>Proyección de Ingresos y EBITDA — 3 Escenarios (CLP M)</h3>
-      <p class="sub">2025 real + proyecciones 2026-2030 por escenario</p>
-      <div class="chart-wrap"><canvas id="c-proj" height="70"></canvas></div>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>Proyección Márgenes — Escenario Base</h3>
-      <div class="chart-wrap"><canvas id="c-proj-margins" height="110"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>FCF Proyectado — Escenario Base (CLP M)</h3>
-      <div class="chart-wrap"><canvas id="c-proj-fcf" height="110"></canvas></div>
-    </div>
-  </div>
-</div>
-
-
-<div id="page-valoracion" class="page">
-  <p class="section-title">Valoración Empresarial — Kawas Coffee SPA</p>
-  <p class="section-sub">Múltiples metodologías · Resultado conservador y realista · Cifras en CLP</p>
-
-  <div class="commentary" style="border-left:4px solid var(--navy);background:var(--blue-lt)">
-    <h4>📋 Supuestos y Contexto de la Valoración</h4>
-    <div style="font-size:11.5px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div>
-        <strong>Parámetros Financieros:</strong><br>
-        · WACC: 14% (tasa ajustada a riesgo PYME chilena + prima liquidez)<br>
-        · Tasa libre de riesgo: 5% (bonos del Tesoro Chile)<br>
-        · Prima de riesgo mercado: 7% (mercado emergente)<br>
-        · Beta apalancada estimada: 1.3 (sector importación alimentos)<br>
-        · Terminal growth rate: 3% (crecimiento PIB largo plazo)
+<div class="app">
+  <aside class="side no-print" id="sidebarDrawer">
+    <button class="side-close" onclick="toggleSidebar(false)" aria-label="Cerrar menú">×</button>
+    <div class="side-top">
+      <div class="brand">
+        <h1>Kawas Coffee</h1>
+        <small>Análisis financiero profesional · V4</small>
       </div>
+      <button class="drawer-toggle" id="drawerToggle" onclick="toggleSidebar()" aria-label="Abrir o cerrar menú lateral" title="Abrir/cerrar menú">
+        <span class="ico">☰</span><span class="txt">Menú</span>
+      </button>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      RUT 76.324.576-4<br />Santiago, Chile<br />Documento interno para análisis, preparación de venta y due diligence.
+    </div>
+  </aside>
+  <div class="drawer-backdrop no-print" onclick="toggleSidebar(false)"></div>
+
+  <main class="main">
+    <section class="hero">
       <div>
-        <strong>Consideraciones Cualitativas:</strong><br>
-        · Empresa privada sin liquidez de mercado: descuento 20-30%<br>
-        · Alta concentración de riesgo en persona del dueño<br>
-        · Historial de volatilidad en márgenes (riesgo de ejecución)<br>
-        · Sector en crecimiento: cultura del café en Chile en expansión<br>
-        · Base de clientes diversificada (B2B + B2C)
+        <span class="pill">2014–2025 · CLP · 2021 N/D · Balance 2025 pendiente</span>
+        <h2>Análisis financiero, capacidad de deuda y valoración profesional</h2>
+        <p>Versión corregida con normalización de EBITDA/FCFF, matriz de calidad de datos, valoración por capas, debt capacity, scoring financiero cuantitativo y advertencias explícitas para proceso de venta en Chile.</p>
       </div>
-    </div>
-  </div>
-
-  <div class="val-method">
-    <h4>Método 1: DCF (Flujo de Caja Descontado) — 5 años</h4>
-    <div class="range" id="dcf-range">Calculando...</div>
-    <div id="dcf-detail" style="font-size:11.5px;color:#555"></div>
-  </div>
-
-  <div class="val-method" style="border-left-color:var(--green)">
-    <h4>Método 2: Múltiplo EV/EBITDA (Comparable Transactions)</h4>
-    <div class="range" id="evebitda-range">Calculando...</div>
-    <div id="evebitda-detail" style="font-size:11.5px;color:#555"></div>
-  </div>
-
-  <div class="val-method" style="border-left-color:var(--amber)">
-    <h4>Método 3: Múltiplo Precio/Utilidad (P/E)</h4>
-    <div class="range" id="pe-range">Calculando...</div>
-    <div id="pe-detail" style="font-size:11.5px;color:#555"></div>
-  </div>
-
-  <div class="val-method" style="border-left-color:var(--slate)">
-    <h4>Método 4: Múltiplo EV/Revenue (Precio/Ventas)</h4>
-    <div class="range" id="evrev-range">Calculando...</div>
-    <div id="evrev-detail" style="font-size:11.5px;color:#555"></div>
-  </div>
-
-  <div class="tbl-wrap">
-    <h3>Resumen de Valoración — Rango de Equity Value</h3>
-    <table id="val-table">
-      <thead><tr>
-        <th style="text-align:left">Metodología</th>
-        <th>EV Piso (CLP M)</th><th>EV Base (CLP M)</th><th>EV Techo (CLP M)</th>
-        <th>Equity Piso</th><th>Equity Base</th><th>Equity Techo</th>
-        <th>P/Ventas Impl.</th>
-      </tr></thead>
-      <tbody id="val-body"></tbody>
-    </table>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-box">
-      <h3>Football Field — Rango de Valoración (CLP M)</h3>
-      <p class="sub">Equity Value por metodología — rango mínimo / base / máximo</p>
-      <div class="chart-wrap"><canvas id="c-football" height="130"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <h3>Análisis de Sensibilidad DCF</h3>
-      <p class="sub">Equity Value según WACC y crecimiento terminal</p>
-      <div id="sensitivity-table" style="overflow-x:auto;font-size:11px"></div>
-    </div>
-  </div>
-
-  <div class="commentary">
-    <h4>🎓 Conclusión de Valoración — Opinión CFA</h4>
-    <div class="insight">
-      <div class="insight-icon">💎</div>
-      <div>
-        <strong>Rango de Valoración Consolidado: $1,200M – $2,800M CLP (~USD 1.3M – 3.1M)</strong>
-        <p>El valor central o "punto medio" de las cuatro metodologías arroja un Enterprise Value de aproximadamente <strong>$1,800M CLP (~USD 2.0M)</strong>. Aplicando la deuda neta (negativa en 2024, pues efectivo supera deuda), el Equity Value base se sitúa en torno a <strong>$1,900M–$2,000M CLP</strong>. Este resultado es conservador y refleja la prima de iliquidez típica de empresas PYME privadas chilenas.</p>
+      <div class="hero-meta">
+        Kawas Coffee SPA<br />Importación café verde · Servicios cafetería<br />Modelo interno no auditado<br /><button class="mini-btn" onclick="window.print()">Imprimir / PDF</button>
       </div>
-    </div>
-    <div class="insight">
-      <div class="insight-icon">⚠️</div>
-      <div>
-        <strong>Factores que podrían elevar la valoración</strong>
-        <p>La recuperación de márgenes en 2025 (margen neto 12.0% vs 3.0% en 2024), el crecimiento del 45.9% en ingresos, y la eliminación virtual de la deuda bancaria son catalizadores positivos. En un escenario de venta estratégica a un comprador con sinergias, el múltiplo podría ubicarse en 8x–10x EBITDA (rango $1,313M–$1,641M CLP solo por este método).</p>
-      </div>
-    </div>
-    <div class="insight">
-      <div class="insight-icon">📉</div>
-      <div>
-        <strong>Factores de riesgo que presionan a la baja</strong>
-        <p>La alta volatilidad histórica de márgenes (de -20.5% en 2020 a +23.4% en 2023 y vuelta a +3.0% en 2024) es el principal riesgo. La dependencia de un dueño-operador singular, sin equipo directivo independiente consolidado, aplica un descuento adicional del 15–25% en transacciones privadas.</p>
-      </div>
-    </div>
-  </div>
+    </section>
+
+    <section id="dashboard" class="page active"></section>
+    <section id="quality" class="page"></section>
+    <section id="eerr" class="page"></section>
+    <section id="balance" class="page"></section>
+    <section id="cashflow" class="page"></section>
+    <section id="ratios" class="page"></section>
+    <section id="debt" class="page"></section>
+    <section id="score" class="page"></section>
+    <section id="projections" class="page"></section>
+    <section id="valuation" class="page"></section>
+    <section id="recommendations" class="page"></section>
+  </main>
 </div>
-
-
-<div id="page-cfa_notes" class="page">
-  <p class="section-title">Análisis y Comentarios CFA — Kawas Coffee SPA</p>
-  <p class="section-sub">Evaluación exhaustiva período 2014-2025  ·  Nivel CFA Charterholder</p>
-
-  <div class="commentary">
-    <h4>📈 A. Análisis de Rentabilidad y Creación de Valor</h4>
-    <div class="insight"><div class="insight-icon">🏆</div><div>
-      <strong>Crecimiento extraordinario: CAGR 57.3% en ingresos (2014→2025)</strong>
-      <p>Kawas Coffee SPA ha logrado un crecimiento de ingresos de 219 veces en 11 años, pasando de $6M CLP en 2014 a $1,334M CLP en 2025. Este crecimiento orgánico es excepcional para una empresa PYME importadora de café en Chile. Sin embargo, el crecimiento en ingresos no siempre se ha traducido en creación de valor para el accionista, dada la alta volatilidad de los márgenes.</p>
-    </div></div>
-    <div class="insight"><div class="insight-icon">📊</div><div>
-      <strong>Margen bruto: señal de fuerza competitiva pero inconsistente</strong>
-      <p>El margen bruto fluctúa significativamente: desde 57.1% en 2016 (período de alta diferenciación) hasta 14.1% en 2017 (cuando todos los costos aparecen en COGS). En 2025 se recupera a 38.9%, nivel saludable para el sector de distribución de café. La tendencia 2022-2025 muestra compresión progresiva del margen bruto, lo que indica presión en precios de compra del café verde o pricing power limitado.</p>
-    </div></div>
-    <div class="insight"><div class="insight-icon">⚡</div><div>
-      <strong>Año 2024: "año de transición" — caída abrupta en rentabilidad</strong>
-      <p>La caída del margen neto de 23.4% (2023) a 3.0% (2024) es la señal de alarma más significativa del período. El EBITDA cayó 83.3% (de $241M a $62M), mientras los ingresos apenas variaron (-2.1%). El diagnóstico apunta a expansión acelerada de costos SGA (SGA/Ingresos subió de 28.0% a 31.9%) y de COGS (COGS/Ingresos subió de 48.6% a 61.3%). La recuperación en 2025 sugiere que fue un año de inversión intensiva, no de deterioro estructural.</p>
-    </div></div>
-    <div class="insight"><div class="insight-icon">✅</div><div>
-      <strong>2025: confirmación de recuperación y nueva etapa</strong>
-      <p>El ejercicio 2025 con $160M CLP de utilidad neta (margen 12.0%) y $1,334M CLP de ingresos (+45.9% YoY) representa el mejor resultado histórico absoluto y consolida el modelo de negocio. El ROE implícito positivo y el EBITDA de $164M son bases sólidas para la valoración y proyección.</p>
-    </div></div>
-  </div>
-
-  <div class="commentary">
-    <h4>💧 B. Análisis de Liquidez y Capital de Trabajo</h4>
-    <div class="insight"><div class="insight-icon">🚨</div><div>
-      <strong>Razón Corriente históricamente ajustada — Riesgo de liquidez en 2019-2020</strong>
-      <p>La razón corriente cayó por debajo de 1.0x en 2019 (0.79x) y en 2020 la empresa operó con patrimonio negativo (-$42M CLP). Este período coincide con los efectos del COVID-19 y una estructura de deuda financiera que absorbió casi toda la liquidez. La recuperación en 2022-2024 es notable, con la razón corriente estabilizándose sobre 1.0x y la deuda financiera reduciéndose a $20M CLP en 2024.</p>
-    </div></div>
-    <div class="insight"><div class="insight-icon">📦</div><div>
-      <strong>Ciclo de Inventario: señal de alerta en 2024</strong>
-      <p>Los DIO (días de inventario) aumentaron significativamente en 2024 (DIO ~64 días vs ~49 días en 2023), coincidiendo con el aumento de inventarios a $98.6M CLP. Esto puede indicar acumulación estratégica anticipando mayores ventas (validada por el crecimiento en 2025) o deterioro en la rotación. El CCE (Ciclo de Conversión de Efectivo) muestra volatilidad pero se mantiene en rangos manejables para el sector.</p>
-    </div></div>
-  </div>
-
-  <div class="commentary">
-    <h4>🏗 C. Análisis de Estructura de Capital y Solvencia</h4>
-    <div class="insight"><div class="insight-icon">📉</div><div>
-      <strong>Desapalancamiento exitoso: de crisis 2020 a balance limpio 2024</strong>
-      <p>La empresa transitó de una situación de patrimonio negativo (-$42M en 2020) y deuda financiera de $101M (2020-2023) a una posición de deuda neta negativa en 2024 (efectivo $85M > deuda $20M = posición neta de caja positiva). Esta transformación en 4 años es notable. El ratio Deuda/EBITDA pasó de >3x en 2022 a prácticamente 0x en 2024, indicando una empresa financieramente saneada.</p>
-    </div></div>
-    <div class="insight"><div class="insight-icon">💡</div><div>
-      <strong>Recomendación de estructura de capital</strong>
-      <p>Con la deuda casi eliminada y flujos de caja mejorados, Kawas Coffee SPA está en posición óptima para: (1) Financiar expansión con deuda estratégica a bajo costo (capacidad de endeudamiento estimada en $200-300M CLP adicionales a 5-7 años), (2) Considerar distribución de utilidades, o (3) Invertir en automatización/logística para mejorar márgenes operacionales.</p>
-    </div></div>
-  </div>
-
-  <div class="commentary">
-    <h4>🔮 D. Riesgos Clave y Factores de Éxito</h4>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div>
-        <p style="font-weight:700;color:var(--red);margin-bottom:8px">⚠️ Riesgos Principales</p>
-        <div class="insight"><div class="insight-icon">🌐</div><div><strong>Riesgo tipo de cambio</strong><p>Importador de café verde → exposición CLP/USD. Depreciación del peso eleva COGS directamente.</p></div></div>
-        <div class="insight"><div class="insight-icon">☕</div><div><strong>Precio commodities</strong><p>Precio internacional del café (NYB-ICE) es volátil. Sin cobertura documentada.</p></div></div>
-        <div class="insight"><div class="insight-icon">👤</div><div><strong>Riesgo persona clave</strong><p>Alta concentración en el dueño/representante legal. Riesgo de continuidad operacional.</p></div></div>
-        <div class="insight"><div class="insight-icon">🏪</div><div><strong>Concentración de clientes</strong><p>Sin información sobre concentración de top clientes. Riesgo si hay HHI alto.</p></div></div>
-      </div>
-      <div>
-        <p style="font-weight:700;color:var(--green);margin-bottom:8px">✅ Factores de Éxito</p>
-        <div class="insight"><div class="insight-icon">📈</div><div><strong>Mercado en expansión</strong><p>Consumo de café especializado en Chile crece 12-15% anual. Tailwind secular.</p></div></div>
-        <div class="insight"><div class="insight-icon">🏭</div><div><strong>Know-how importación</strong><p>Conocimiento especializado en logística, aduana y relaciones con productores.</p></div></div>
-        <div class="insight"><div class="insight-icon">💰</div><div><strong>Balance saneado</strong><p>Deuda prácticamente nula en 2024 da flexibilidad financiera para crecer.</p></div></div>
-        <div class="insight"><div class="insight-icon">🌱</div><div><strong>Marca en construcción</strong><p>Posicionamiento en segmento de café de especialidad con mayor margen potencial.</p></div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="commentary">
-    <h4>📋 E. Recomendaciones Estratégicas CFA</h4>
-    <div class="insight"><div class="insight-icon">1️⃣</div><div>
-      <strong>Implementar cobertura cambiaria (hedging)</strong>
-      <p>Dado el 100% de dependencia en importaciones USD/EUR, implementar contratos forward o opciones para cubrir al menos el 60% de las compras proyectadas a 6 meses. Esto reduciría la volatilidad de márgenes significativamente.</p>
-    </div></div>
-    <div class="insight"><div class="insight-icon">2️⃣</div><div>
-      <strong>Profesionalizar la gobernanza corporativa</strong>
-      <p>Constituir un Directorio formal con al menos 1-2 directores independientes. Implementar auditoría externa certificada. Esto aumentará el valor percibido y facilitará acceso a financiamiento bancario y/o potenciales inversionistas.</p>
-    </div></div>
-    <div class="insight"><div class="insight-icon">3️⃣</div><div>
-      <strong>Optimizar capital de trabajo para liberar caja</strong>
-      <p>El inventario de $98.6M (2024) representa 64 días de COGS. Reducirlo a 45-50 días liberaría $21-34M CLP en caja. Implementar sistema de inventory management (JIT adaptado) y negociar mejores términos con proveedores.</p>
-    </div></div>
-    <div class="insight"><div class="insight-icon">4️⃣</div><div>
-      <strong>Estrategia de precios y mix</strong>
-      <p>La compresión de margen bruto de 51.3% (2023) a 38.9% (2025) requiere atención. Evaluar incremento de precios selectivo (3-5%), push de cafés premium/especiales (mayor margen), y renegociación con proveedores de origen.</p>
-    </div></div>
-  </div>
-</div>
-
-
-<footer style="background:var(--espresso);color:rgba(255,255,255,.6);text-align:center;
-  padding:16px;font-size:11px;margin-top:32px" class="no-print">
-  Kawas Coffee SPA · RUT 76.324.576-4 · Análisis Financiero Exhaustivo 2014–2025 ·
-  Cifras en CLP · Documento Confidencial · Solo uso interno
-</footer>
-
 
 <script>
-// ================================================================
-// KAWAS COFFEE SPA — DATA TEMPLATE v2.0
-// TO UPDATE: Add new years to arrays below, null for missing BS data
-// ================================================================
-const YEARS = [2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
-const NY = YEARS.length;
+// =============================================================
+// KAWAS COFFEE SPA — MODELO FINANCIERO PROFESIONAL V4
+// Notas clave:
+// 1) 2021 no disponible. Se conserva como N/D para no ocultar el vacío.
+// 2) Balance 2025 no disponible. Valoración usa 2024 como proxy de caja/deuda
+//    con castigos de riesgo y sin reconocer caja excedente en el caso ácido.
+// 3) El objetivo es análisis profesional y defendible, no maximizar valor.
+// =============================================================
+const Y=[2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025], NY=Y.length, YL=Y.map(String);
+const IS={
+  rev:[6083284,47869974,94384973,159870969,192512838,365835970,207601445,null,651687649,934224952,914575491,1334431592],
+  cogs:[4039428,30526846,40457526,137286780,113269918,250470045,145047110,null,379135740,454233982,560879129,815669725],
+  gp:[2043856,17343128,53927447,22584189,79242920,115365925,62554335,null,272551909,479990970,353696362,518761867],
+  sga:[4250771,14467215,52405410,0,73134005,107508156,105087491,null,188350535,261512090,291679004,354612117],
+  da:[377864,438546,485755,0,2750743,4776161,8860809,null,17038888,23081824,12900388,14999393],
+  ebit:[-2206915,2875913,1522037,22584189,10867793,8280210,-42467178,null,84192976,218144880,49116970,149150357],
+  ebitda:[-1829051,3314459,2007792,22584189,13618536,13056371,-33606369,null,101231864,241226704,62017358,164149750],
+  nop:[0,0,0,0,-5358958,0,0,null,0,0,-21646518,11080021],
+  ebt:[-2206915,2875913,1522037,22584189,5508835,8280210,-42467178,null,84192976,218144880,27470452,160230378],
+  net:[-2206915,2875913,1522037,22584189,5508835,8280210,-42467178,null,84192976,218144880,27470452,160230378]
+};
+const BS={
+  cash:[14562937,11954833,1951055,3891753,27389806,51264565,25709415,null,8195030,93676482,85356165,null],
+  ar:[1399140,5592226,21792666,3747020,29679425,79635821,25185743,null,0,69675668,3669303,null],
+  inv:[3059039,5179477,15040559,14493204,15020984,20473841,55004603,null,47909861,61246317,98609930,null],
+  oca:[1362401,1271670,642436,4138551,19875751,11163730,5056458,null,66441747,6790835,10256121,null],
+  ca:[20383517,23947206,39415716,26112445,91965966,162537957,110956219,null,161779196,235412347,197891519,null],
+  ppen:[5566496,5359780,5029459,6386350,38058150,40766576,47985521,null,60840445,76693300,35163975,null],
+  onca:[0,0,0,0,3551633,9348396,77662628,null,157836858,157367701,144459,null],
+  ta:[25950013,29306986,44445175,32498795,133575749,212652529,236604368,null,380456499,469473348,233199838,null],
+  ap:[19206457,19210739,0,0,9205806,55259400,11498085,null,71105662,0,12721347,null],
+  std:[0,0,40400239,16315194,49656506,76000939,100772186,null,100772186,100772186,20000000,null],
+  ocl:[16971,231412,-7599298,-18044822,9524188,73111980,124334097,null,124385675,150556282,26572959,null],
+  cl:[19223428,19442151,32800941,-1729628,68386500,204372319,236604368,null,296263523,251328468,59294306,null],
+  ltd:[0,0,0,0,22362919,0,0,null,0,0,0,null],
+  tl:[19223428,19442151,32800941,-1729628,90749419,204372319,236604368,null,296263523,251328468,59294306,null],
+  eq:[6726585,9864835,11644234,34228423,42826330,8280210,-42467178,null,84192976,218144880,173905532,null]
+};
+const INT=[0,0,143403,182628,123941,416676,3419311,null,114971,499221,4223754,2264008];
+const TAX_RATE=0.27, BANK_RATE=0.12, TARGET_DSCR=1.35, TERM_YEARS=5;
 
-const IS = {
-  revenue:   [6083284,47869974,94384973,159870969,192512838,365835970,207601445,null,651687649,934224952,914575491,1334431592],
-  cogs:      [4039428,30526846,40457526,137286780,113269918,250470045,145047110,null,379135740,454233982,560879129,815669725],
-  gross:     [2043856,17343128,53927447,22584189,79242920,115365925,62554335,null,272551909,479990970,353696362,518761867],
-  sga:       [4250771,14467215,52405410,0,73134005,107508156,105087491,null,188350535,261512090,291679004,354612117],
-  da:        [377864,438546,485755,0,2750743,4776161,8860809,null,17038888,23081824,12900388,14999393],
-  ebit:      [-2206915,2875913,1522037,22584189,10867793,8280210,-42467178,null,84192976,218144880,49116970,149150357],
-  ebitda:    [-1829051,3314459,2007792,22584189,13618536,13056371,-33606369,null,101231864,241226704,62017358,164149750],
-  non_op:    [0,0,0,0,-5358958,0,0,null,0,0,-21646518,11080021],
-  ebt:       [-2206915,2875913,1522037,22584189,5508835,8280210,-42467178,null,84192976,218144880,27470452,160230378],
-  net:       [-2206915,2875913,1522037,22584189,5508835,8280210,-42467178,null,84192976,218144880,27470452,160230378],
+const DT={
+ ingresos:[
+  {l:'Ventas por ventas del giro',d:[6083284,47869974,94384973,159870969,192512838,360193462,207048063,null,651687649,934224952,914575491,1334431592]},
+  {l:'Arriendos percibidos',d:[null,null,null,null,2000000,5642508,400000,null,null,null,null,null]},
+  {l:'Reajuste IVA CF y otros',d:[null,null,null,null,null,null,153382,null,389919,null,null,null]}
+ ],
+ cogs:[
+  {l:'Costo de ventas — producto',d:[4039428,30526846,40457526,137286780,113269918,250470045,139239421,null,379135740,454233982,560879129,815669725]},
+  {l:'Gastos de importación y aduanas',d:[null,1675058,null,1648879,9639120,null,null,null,null,null,null,null]},
+  {l:'Costo de transporte y flete directo',d:[null,368181,null,null,null,null,2412497,null,null,null,null,null]}
+ ],
+ sga:[
+  {cat:'Personal y Recursos Humanos',totals:[null,null,7951080,10844076,13657983,20583200,20224990,null,44652447,113995420,164163492,null],items:[
+   {l:'Sueldos y Salarios',d:[null,null,7686080,10844076,13657983,18499037,15766684,null,35243638,89577300,110828314,null]},
+   {l:'Honorarios externos',d:[265000,null,5394321,11990279,18531960,51593317,34119007,null,33177096,17035800,25012749,null]},
+   {l:'Gratificaciones',d:[null,null,null,null,null,null,null,null,6466216,14372290,18036865,null]},
+   {l:'Aportes Patronales y Previsión',d:[null,null,null,null,null,2083663,4457508,null,2942593,4971130,7099739,null]},
+   {l:'Finiquitos, Bonos y Beneficios',d:[null,null,null,null,null,null,null,null,null,3821086,3185825,null]}
+  ]},
+  {cat:'Ocupación e Infraestructura',totals:[584070,660295,null,null,6292994,12690707,18563699,null,35608130,39342726,53651558,null],items:[
+   {l:'Arriendos de propiedades',d:[66240,91300,null,null,6292994,12690707,18563699,null,26000328,30507645,46375669,null]},
+   {l:'Leasing Operativo',d:[null,null,null,null,null,null,null,null,7053324,6661663,null,null]},
+   {l:'Mantenciones y reparaciones',d:[517621,660295,null,null,null,null,null,null,2554478,2173418,6867639,null]},
+   {l:'Mantención vehículos',d:[null,null,null,null,null,null,null,null,null,null,150000,null]},
+   {l:'Arriendo de maquinaria',d:[null,null,null,null,null,null,null,null,null,2976130,258250,null]}
+  ]},
+  {cat:'Logística y Distribución',totals:[null,368181,null,1648879,null,301361,5231827,null,21811339,21106184,29226988,null],items:[
+   {l:'Fletes y envíos',d:[null,368181,null,1648879,null,167689,2412497,null,16562690,9998107,3834819,null]},
+   {l:'Traslados y movilización',d:[null,null,null,null,null,null,2819330,null,2043824,5431697,15000571,null]},
+   {l:'Gastos de importación operacional',d:[null,null,null,null,null,83130,null,null,3204675,5676380,9343539,null]},
+   {l:'Combustible y peajes',d:[null,null,null,null,null,50542,null,null,null,null,971689,null]},
+   {l:'Alojamiento en terreno',d:[null,null,null,null,null,null,null,null,null,null,76370,null]}
+  ]},
+  {cat:'Tecnología y Sistemas',totals:[48390,189072,null,null,null,786191,2784256,null,1179695,1273235,19127882,null],items:[
+   {l:'Gastos computacionales y software',d:[48390,189072,null,null,null,null,1998937,null,10599711,14957447,18762221,null]},
+   {l:'Comisiones Transbank / pago digital',d:[null,null,null,null,null,null,620777,null,481119,634701,365661,null]},
+   {l:'Telecomunicaciones',d:[null,null,null,null,null,786191,1164742,null,698584,638534,615308,null]}
+  ]},
+  {cat:'Comercial y Marketing',totals:[107239,79558,null,null,null,716807,null,null,3791548,13073940,8689196,null],items:[
+   {l:'Publicidad y marketing',d:[107239,79558,null,null,null,716807,null,null,3195668,3832477,2247368,null]},
+   {l:'Gastos de comercialización',d:[null,null,null,null,null,null,null,null,595880,7276683,2493228,null]},
+   {l:'Comisiones por ventas',d:[null,null,null,null,null,null,null,null,null,1964780,3948600,null]}
+  ]},
+  {cat:'Administración y Generales',totals:[null,10064264,null,null,null,4029496,null,null,null,null,16819888,null],items:[
+   {l:'Gastos generales y bodegas',d:[295003,9211023,37287107,92153163,6532150,4029496,4022245,null,12403686,5840203,3457055,null]},
+   {l:'Asesorías y consultoría',d:[72742,524713,64767,294779,3950153,null,null,null,2023144,2875060,7236465,null]},
+   {l:'Servicios básicos',d:[null,null,null,null,null,2940662,1816103,null,3216393,5040354,6126368,null]},
+   {l:'Gastos bancarios operacionales',d:[null,272962,699613,120293,5743960,null,1827356,null,1420680,1213229,null,null]}
+  ]}
+ ],
+ nop:[
+  {l:'Corrección monetaria / reajustes',d:[null,null,null,null,null,null,null,null,6340956,1916891,1266303,null]},
+  {l:'Unidad de reajuste y diferencia de cambio',d:[null,null,null,null,null,null,7349303,null,389919,null,282753,null]},
+  {l:'Intereses y gastos bancarios',d:[0,0,-143403,-182628,-123941,-416676,-3419311,null,-114971,-499221,-4223754,-2264008]},
+  {l:'Leasing operativo fuera de explotación',d:[null,null,null,null,null,null,null,null,null,null,-8860414,null]},
+  {l:'Otros gastos fuera de explotación',d:[null,null,null,null,-5358958,null,null,null,-114971,-499221,-9394197,null]}
+ ]
 };
 
-const BS = {
-  cash:           [14562937,11954833,1951055,3891753,27389806,51264565,25709415,null,8195030,93676482,85356165,null],
-  ar:             [1399140,5592226,21792666,3747020,29679425,79635821,25185743,null,0,69675668,3669303,null],
-  inventory:      [3059039,5179477,15040559,14493204,15020984,20473841,55004603,null,47909861,61246317,98609930,null],
-  other_ca:       [1362401,1271670,642436,4138551,19875751,11163730,5056458,null,66441747,6790835,10256121,null],
-  current_assets: [20383517,23947206,39415716,26112445,91965966,162537957,110956219,null,161779196,235412347,197891519,null],
-  ppe_net:        [5566496,5359780,5029459,6386350,38058150,40766576,47985521,null,60840445,76693300,35163975,null],
-  other_nca:      [0,0,0,0,3551633,9348396,77662628,null,157836858,157367701,144459,null],
-  total_assets:   [25950013,29306986,44445175,32498795,133575749,212652529,236604368,null,380456499,469473348,233199838,null],
-  ap:             [19206457,19210739,0,0,9205806,55259400,11498085,null,71105662,0,12721347,null],
-  std:            [0,0,40400239,16315194,49656506,76000939,100772186,null,100772186,100772186,20000000,null],
-  other_cl:       [16971,231412,-7599298,-18044822,9524188,73111980,124334097,null,124385675,150556282,26572959,null],
-  current_liab:   [19223428,19442151,32800941,-1729628,68386500,204372319,236604368,null,296263523,251328468,59294306,null],
-  ltd:            [0,0,0,0,22362919,0,0,null,0,0,0,null],
-  total_liab:     [19223428,19442151,32800941,-1729628,90749419,204372319,236604368,null,296263523,251328468,59294306,null],
-  equity:         [6726585,9864835,11644234,34228423,42826330,8280210,-42467178,null,84192976,218144880,173905532,null],
-};
+// ---------- helpers ----------
+const nz=v=>v==null?0:v, pct=(a,b)=>(a==null||b==null||b===0)?null:a/b*100, rat=(a,b)=>(a==null||b==null||b===0)?null:a/b;
+const avg=(a)=>{const x=a.filter(v=>v!=null);return x.length?x.reduce((s,v)=>s+v,0)/x.length:null};
+const avg2=(arr,i)=>i===0?arr[0]:((arr[i]!=null&&arr[i-1]!=null)?(arr[i]+arr[i-1])/2:arr[i]);
+const delta=(arr,i)=>i===0||arr[i]==null||arr[i-1]==null?null:arr[i]-arr[i-1];
+const ndelta=(arr,i)=>{const d=delta(arr,i);return d==null?null:-d};
+const f0=n=>Number(n).toLocaleString('es-CL',{maximumFractionDigits:0});
+const fM=(v,d=1)=>v==null?'<span class="nd">N/D</span>':(v<0?`<span class="neg">($${Math.abs(v/1e6).toLocaleString('es-CL',{maximumFractionDigits:d,minimumFractionDigits:d})}M)</span>`:`$${(v/1e6).toLocaleString('es-CL',{maximumFractionDigits:d,minimumFractionDigits:d})}M`);
+const fMM=(v,d=0)=>v==null?'<span class="nd">N/D</span>':(v<0?`<span class="neg">($${Math.abs(v).toLocaleString('es-CL',{maximumFractionDigits:d})}M)</span>`:`$${v.toLocaleString('es-CL',{maximumFractionDigits:d})}M`);
+const fP=v=>v==null?'<span class="nd">N/D</span>':(v<0?`<span class="neg">(${Math.abs(v).toFixed(1)}%)</span>`:`${v.toFixed(1)}%`);
+const fX=v=>v==null?'<span class="nd">N/D</span>':(v<0?`<span class="neg">(${Math.abs(v).toFixed(2)}x)</span>`:`${v.toFixed(2)}x`);
+const fD=v=>v==null?'<span class="nd">N/D</span>':`${Math.round(v)} d`;
+const cls=v=>v==null?'':v<0?'neg':'pos';
+const strip=s=>String(s).replace(/<[^>]*>/g,'');
+function row(label,arr,fmt=fM,klass=''){return `<tr class="${klass}"><td>${label}</td>${arr.map(v=>`<td>${fmt(v)}</td>`).join('')}</tr>`}
+function head(label='Concepto'){return `<thead><tr><th>${label}</th>${Y.map(y=>`<th>${y}</th>`).join('')}</tr></thead>`}
+function tableWrap(title,sub,html,actions=''){return `<div class="table-card"><div class="table-head"><div><h4>${title}</h4>${sub?`<small>${sub}</small>`:''}</div><div class="table-actions">${actions}</div></div><div class="table-scroll" tabindex="0"><table>${html}</table></div></div>`}
+function title(h,sub=''){return `<div class="section-title"><div><h3>${h}</h3>${sub?`<p>${sub}</p>`:''}</div></div>`}
+function annuityFactor(r,n){return (1-Math.pow(1+r,-n))/r}
 
-// ── Helpers ──────────────────────────────────────────────────────
-const M  = v => v == null ? null : v/1e6;
-const p  = (a,b) => (a==null||b==null||b===0) ? null : a/b*100;
-const rt = (a,b) => (a==null||b==null||b===0) ? null : a/b;
-const avg2 = (arr,i) => i===0 ? arr[0] : ((arr[i]!=null&&arr[i-1]!=null) ? (arr[i]+arr[i-1])/2 : arr[i]);
-const fmt  = (v,d=1) => v==null?'N/D':v<0?'('+Math.abs(v).toFixed(d)+')':v.toFixed(d);
-const fmtM = (v,d=1) => v==null?'N/D':v<0?'($'+Math.abs(v/1e6).toFixed(d)+'M)':'$'+fmt(v/1e6,d)+'M';
-const fmtP = v => v==null?'N/D':v<0?'('+Math.abs(v).toFixed(1)+'%)':v.toFixed(1)+'%';
-const fmtX = v => v==null?'N/D':v<0?'('+Math.abs(v).toFixed(2)+'x)':v.toFixed(2)+'x';
-const fmtD = v => v==null?'N/D':Math.round(v)+' d';
+// ---------- professional model ----------
+function derived(){
+ const idx=[8,9,10,11];             // 2022-2025 available P&L window
+ const w=[.10,.20,.30,.40];
+ const wavg=(arr)=>idx.reduce((s,i,k)=>s+(arr[i]||0)*w[k],0);
+ const revNorm=wavg(IS.rev), ebitdaReported=wavg(IS.ebitda), ebitReported=wavg(IS.ebit), daNorm=wavg(IS.da);
+ const qualityHaircut=.10;
+ const ebitdaNorm=ebitdaReported*(1-qualityHaircut);
+ const ebitNorm=ebitReported*(1-qualityHaircut);
+ const nopat=Math.max(0,ebitNorm*(1-TAX_RATE));
+ const maintCapex=Math.max(daNorm, revNorm*.025);
+ const nwcReserve=revNorm*.02;
+ const fcffNorm=Math.max(0,nopat+daNorm-maintCapex-nwcReserve);
+ const revenueNorm=revNorm;
+ const debt2024=(BS.std[10]||0)+(BS.ltd[10]||0), cash2024=BS.cash[10]||0, netDebt2024=debt2024-cash2024;
+ const equity2024=BS.eq[10], totalLiab2024=BS.tl[10], totalAssets2024=BS.ta[10];
+ return {revNorm,ebitdaReported,ebitdaNorm,ebitNorm,daNorm,nopat,maintCapex,nwcReserve,fcffNorm,revenueNorm,debt2024,cash2024,netDebt2024,equity2024,totalLiab2024,totalAssets2024};
+}
+const D=derived();
+function fcffReported(i){
+ if(i===0||IS.ebit[i]==null)return null;
+ const tax=Math.max(0,IS.ebit[i]*TAX_RATE);
+ const capex=(BS.ppen[i]!=null&&BS.ppen[i-1]!=null)?Math.max(0,BS.ppen[i]-BS.ppen[i-1]+(IS.da[i]||0)):Math.max(0,(IS.rev[i]||0)*.025);
+ const wcParts=[delta(BS.ar,i),delta(BS.inv,i),delta(BS.oca,i),-delta(BS.ap,i),-delta(BS.ocl,i)].filter(v=>v!=null);
+ const dNwc=wcParts.length?wcParts.reduce((s,v)=>s+v,0):null;
+ return dNwc==null?null:IS.ebit[i]-tax+(IS.da[i]||0)-capex-dNwc;
+}
+function cfads(i){
+ if(IS.ebitda[i]==null)return null;
+ const tax=Math.max(0,IS.ebit[i]||0)*TAX_RATE;
+ const capex=Math.max(IS.da[i]||0,(IS.rev[i]||0)*.02);
+ const reserve=(IS.rev[i]||0)*.01;
+ return IS.ebitda[i]-tax-capex-reserve;
+}
+function debtCapacityByMeasure(measureArr){
+ const af=annuityFactor(BANK_RATE,TERM_YEARS);
+ return {
+  pv:measureArr.map(m=>m==null?null:Math.max(0,m/TARGET_DSCR)*af),
+  bankYrs:measureArr.map((m,i)=>m==null?null:(((BS.std[i]||0)+(BS.ltd[i]||0))/(Math.max(1,m/TARGET_DSCR)))),
+  totalYrs:measureArr.map((m,i)=>m==null||BS.tl[i]==null?null:(BS.tl[i]/Math.max(1,m/TARGET_DSCR)))
+ }
+}
+function scorePoint(type,v){
+ if(v==null||!isFinite(v))return null;
+ const rules={
+  cash:[[100,20],[50,15],[10,10],[0,5],[-Infinity,0]],
+  fdEbitda:[[0,20],[1,20],[2,15],[3,10],[5,5],[Infinity,0]],
+  icr:[[10,20],[6,15],[3,10],[1.5,5],[-Infinity,0]],
+  equityRatio:[[50,20],[35,15],[20,10],[10,5],[-Infinity,0]],
+  gearing:[[0.5,20],[1,15],[2,10],[4,5],[Infinity,0]],
+  opMargin:[[15,20],[10,15],[5,10],[0,5],[-Infinity,0]],
+  roa:[[15,20],[8,15],[4,10],[0,5],[-Infinity,0]],
+  growth:[[25,20],[10,15],[0,10],[-10,5],[-Infinity,0]],
+  networth:[[200,20],[100,15],[50,10],[0,5],[-Infinity,0]],
+  sales:[[1200,20],[800,15],[400,10],[100,5],[-Infinity,0]]
+ };
+ const r=rules[type];
+ if(['fdEbitda','gearing'].includes(type)){for(const [lim,p] of r){if(v<=lim)return p}}
+ else {for(const [lim,p] of r){if(v>=lim)return p}}
+ return 0;
+}
+function scoreRows(){
+ const cashMM=Y.map((_,i)=>cfads(i)==null?null:cfads(i)/1e6);
+ const fdE=Y.map((_,i)=>{const fd=(BS.std[i]||0)+(BS.ltd[i]||0);return IS.ebitda[i]>0?fd/IS.ebitda[i]:null});
+ const icr=Y.map((_,i)=>INT[i]&&INT[i]>0?IS.ebitda[i]/INT[i]:null);
+ const eqRatio=Y.map((_,i)=>pct(BS.eq[i],BS.ta[i]));
+ const gearing=Y.map((_,i)=>BS.eq[i]>0?BS.tl[i]/BS.eq[i]:null);
+ const opm=Y.map((_,i)=>pct(IS.ebit[i],IS.rev[i]));
+ const roa=Y.map((_,i)=>pct(IS.net[i],avg2(BS.ta,i)));
+ const growth=Y.map((_,i)=>i===0||BS.eq[i]==null||BS.eq[i-1]==null||BS.eq[i-1]===0?null:(BS.eq[i]-BS.eq[i-1])/Math.abs(BS.eq[i-1])*100);
+ const nw=Y.map((_,i)=>BS.eq[i]==null?null:BS.eq[i]/1e6);
+ const sales=Y.map((_,i)=>IS.rev[i]==null?null:IS.rev[i]/1e6);
+ const rows=[
+  ['Capability for debt repayment — Cash flow amount (MM)',cashMM,v=>fMM(v,1),'cash'],
+  ['Points — Cash flow amount',cashMM,v=>scorePoint('cash',v),'points'],
+  ['Funded Debt / EBITDA',fdE,fX,'fdEbitda'],['Points — Funded Debt / EBITDA',fdE,v=>scorePoint('fdEbitda',v),'points'],
+  ['EBITDA / Net interest payment',icr,fX,'icr'],['Points — EBITDA / Net interest payment',icr,v=>scorePoint('icr',v),'points'],
+  ['Safety — Net worth / Total assets ratio',eqRatio,fP,'equityRatio'],['Points — Net worth / Total assets',eqRatio,v=>scorePoint('equityRatio',v),'points'],
+  ['Gearing ratio',gearing,fX,'gearing'],['Points — Gearing',gearing,v=>scorePoint('gearing',v),'points'],
+  ['Profitability — Operating profit / Sales',opm,fP,'opMargin'],['Points — Operating profit / Sales',opm,v=>scorePoint('opMargin',v),'points'],
+  ['(Net profit - extraordinary items) / Total assets',roa,fP,'roa'],['Points — ROA adjusted',roa,v=>scorePoint('roa',v),'points'],
+  ['Growth potential — Inc/Dec retained earnings / Net worth',growth,fP,'growth'],['Points — Growth potential',growth,v=>scorePoint('growth',v),'points'],
+  ['Size — Net worth (MM)',nw,v=>fMM(v,1),'networth'],['Points — Net worth size',nw,v=>scorePoint('networth',v),'points'],
+  ['Sales (MM)',sales,v=>fMM(v,1),'sales'],['Points — Sales size',sales,v=>scorePoint('sales',v),'points']
+ ];
+ const pointsByYear=Y.map((_,i)=>rows.filter(r=>r[3]==='points').reduce((s,r)=>s+(r[2](r[1][i])||0),0));
+ return {rows,pointsByYear};
+}
+function valuationModel(){
+ const cases={
+  acid:{name:'Comprador ácido',wacc:.30,g:-.01,growth:.02,years:5,cashRec:0,dcfHair:.20,ebitdaMult:2.75,salesMult:.20,bookHair:.35},
+  prudent:{name:'Vendedor prudente',wacc:.24,g:.00,growth:.05,years:5,cashRec:.50,dcfHair:.10,ebitdaMult:4.00,salesMult:.35,bookHair:.25},
+  strategic:{name:'Estratégico condicionado',wacc:.19,g:.015,growth:.08,years:5,cashRec:1.00,dcfHair:.00,ebitdaMult:5.75,salesMult:.55,bookHair:.15}
+ };
+ const out={};
+ for(const [k,c] of Object.entries(cases)){
+  let fcfs=[], f=D.fcffNorm;
+  for(let i=1;i<=c.years;i++){f=f*(1+c.growth);fcfs.push(f)}
+  const pvF=fcfs.reduce((s,x,i)=>s+x/Math.pow(1+c.wacc,i+1),0);
+  const tv=fcfs.at(-1)*(1+c.g)/(c.wacc-c.g);
+  const pvT=tv/Math.pow(1+c.wacc,c.years);
+  const evDcf=(pvF+pvT)*(1-c.dcfHair);
+  const netDebtAdj=D.debt2024-D.cash2024*c.cashRec;
+  const eqDcf=evDcf-netDebtAdj;
+  const evEbitda=D.ebitdaNorm/1e6*c.ebitdaMult;
+  const eqEbitda=evEbitda-netDebtAdj/1e6;
+  const evSales=D.revenueNorm/1e6*c.salesMult;
+  const eqSales=evSales-netDebtAdj/1e6;
+  const eqBook=(D.equity2024/1e6)*(1-c.bookHair);
+  const weighted=eqDcf/1e6*.30+eqEbitda*.35+eqSales*.15+eqBook*.20;
+  out[k]={...c,fcfs,pvF:pvF/1e6,pvT:pvT/1e6,evDcf:evDcf/1e6,eqDcf:eqDcf/1e6,evEbitda,eqEbitda,evSales,eqSales,eqBook,weighted,netDebtAdj:netDebtAdj/1e6};
+ }
+ return out;
+}
+const VAL=valuationModel();
 
-const yrLabel = YEARS.map(String);
-
-// ── Navigation ────────────────────────────────────────────────────
-function show(id) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  event.currentTarget.classList.add('active');
+// ---------- rendering ----------
+const pages=[
+ ['dashboard','Dashboard'],['quality','Calidad de datos'],['eerr','EERR'],['balance','Balance'],['cashflow','Flujo Caja'],['ratios','Ratios'],['debt','Debt Capacity'],['score','Scoring'],['projections','Proyecciones'],['valuation','Valoración'],['recommendations','Recomendaciones']
+];
+document.getElementById('nav').innerHTML=pages.map(([id,n],i)=>`<button class="${i===0?'active':''}" onclick="showPage('${id}',this)">${n}</button>`).join('');
+function toggleSidebar(force){
+ const body=document.body;
+ const isMobile=window.matchMedia('(max-width:1100px)').matches;
+ if(isMobile){
+   const open=force===undefined?!body.classList.contains('sidebar-open'):force;
+   body.classList.toggle('sidebar-open',open);
+   body.classList.toggle('drawer-overlay',open);
+ }else{
+   const collapsed=force===undefined?!body.classList.contains('sidebar-collapsed'):!force;
+   body.classList.toggle('sidebar-collapsed',collapsed);
+   localStorage.setItem('kawasSidebarCollapsed',collapsed?'1':'0');
+ }
+ setTimeout(initCharts,180);
+}
+function restoreSidebar(){
+ if(localStorage.getItem('kawasSidebarCollapsed')==='1')document.body.classList.add('sidebar-collapsed');
+}
+function showPage(id,btn){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active');
+ if(window.matchMedia('(max-width:1100px)').matches)toggleSidebar(false);
+ window.scrollTo(0,0);
+ setTimeout(initCharts,120);
 }
 
-// ── Color helpers ─────────────────────────────────────────────────
-const PALETTE = {
-  navy:'#1B2A47',green:'#1A6B3C',red:'#8B1A1A',amber:'#C08040',
-  blue:'#1A3A6B',slate:'#566573',purple:'#6C3483',teal:'#0E7D7D',
-  cream:'#F8F3EC',greenLt:'#D5F5E3',redLt:'#FAD7D7',amberLt:'#FEF9E7',
-};
-const pos_neg = v => v==null?PALETTE.slate:v>=0?PALETTE.green:PALETTE.red;
-
-// ── KPI Cards ─────────────────────────────────────────────────────
-function buildKPI() {
-  const last = NY-1;
-  const prev = NY-2; // skip 2021 (null year)
-  const r25  = IS.revenue[last];
-  const r24  = IS.revenue[prev];
-  const n25  = IS.net[last];
-  const e25  = IS.ebitda[last];
-  const ta24 = BS.total_assets[prev];
-  const eq24 = BS.equity[prev];
-  const gm25 = p(IS.gross[last],r25);
-  const nm25 = p(n25,r25);
-  const em25 = p(e25,r25);
-  const yoy  = p(r25-r24,r24);
-
-  const kpis = [
-    {label:'Ingresos 2025',val:'$1,334M',sub:`+${fmtP(yoy)} vs 2024`,cls:'green',tag:'▲ Récord',tagCls:'up'},
-    {label:'Utilidad Neta 2025',val:`$${(n25/1e6).toFixed(0)}M`,sub:`Margen ${fmtP(nm25)}`,cls:'green',tag:'▲',tagCls:'up'},
-    {label:'EBITDA 2025',val:`$${(e25/1e6).toFixed(0)}M`,sub:`Margen ${fmtP(em25)}`,cls:'amber',tag:'▲',tagCls:'up'},
-    {label:'Margen Bruto 2025',val:fmtP(gm25),sub:'Costo/Rev 61.1%',cls:'blue',tag:'Sólido',tagCls:'neu'},
-    {label:'CAGR Ingresos',val:'57.3%',sub:'2014→2025 (11 años)',cls:'purple',tag:'Extraordinario',tagCls:'up'},
-    {label:'Activos Totales 2024',val:'$233M',sub:'vs $469M en 2023',cls:'',tag:'',tagCls:'neu'},
-    {label:'Patrimonio 2024',val:'$174M',sub:'vs -$42M en 2020',cls:'green',tag:'▲ Recuperado',tagCls:'up'},
-    {label:'Deuda Financiera 2024',val:'$20M',sub:'Deuda Neta: -$65M (caja)',cls:'green',tag:'✓ Saneado',tagCls:'up'},
-  ];
-  const el = document.getElementById('kpi-cards');
-  el.innerHTML = kpis.map(k=>`
-    <div class="card ${k.cls}">
-      <div class="card-label">${k.label}</div>
-      <div class="card-value ${k.val.includes('(')?' neg':''}">${k.val}</div>
-      <div class="card-sub">${k.sub}</div>
-      ${k.tag?`<span class="card-tag tag-${k.tagCls}">${k.tag}</span>`:''}
-    </div>`).join('');
+function renderDashboard(){
+ const r25=IS.rev[11], r24=IS.rev[10], e25=IS.ebitda[11], n25=IS.net[11], yoy=pct(r25-r24,r24), nm=pct(n25,r25), em=pct(e25,r25), gm=pct(IS.gp[11],r25);
+ const cards=[
+  ['Ingresos 2025',fM(r25,0),`+${yoy.toFixed(1)}% vs 2024`,'good','Récord'],['EBITDA 2025',fM(e25,0),`Margen ${strip(fP(em))}`,'warn','Reportado'],['EBITDA normalizado',fMM(D.ebitdaNorm/1e6,0),'Ponderado 2022-2025 menos haircut 10%','bad','Base valoración'],['FCFF normalizado',fMM(D.fcffNorm/1e6,0),'Después de impuestos, capex y capital de trabajo','bad','Conservador'],['Utilidad neta 2025',fM(n25,0),`Margen ${strip(fP(nm))}`,'good','Alto'],['Margen bruto 2025',fP(gm),'COGS 61,1% de ingresos','warn','Presión costo'],['Caja neta 2024',fMM(-D.netDebt2024/1e6,0),'No se reconoce 100% en caso ácido','good','Pendiente validar'],['Valor prudente ponderado',fMM(VAL.prudent.weighted,0),'No incluye prima estratégica completa','warn','Referencia venta']
+ ];
+ const traffic=[
+  ['Calidad de datos','Ámbar','2021 y balance 2025 faltantes','warn'],['Liquidez 2024',strip(fX(rat(BS.ca[10],BS.cl[10]))),'Sólida, pero con balance 2025 pendiente','good'],['Margen EBITDA 2025',strip(fP(em)),'Aceptable para distribuidor/importador','good'],['Volatilidad margen','Alta','2023 muy fuerte, 2024 débil, 2025 recuperación','bad'],['Deuda neta','Caja neta 2024','Debe validarse al cierre de venta','warn'],['Valoración','Prudente','Se baja WACC/múltiplos optimistas anteriores','good']
+ ];
+ document.getElementById('dashboard').innerHTML=title('Resumen ejecutivo','Lectura corregida para gestión interna, due diligence y venta')+
+ `<div class="grid kpi">${cards.map(c=>`<div class="card kpi-card ${c[3]}"><div class="kpi-label">${c[0]}</div><div class="kpi-value">${c[1]}</div><div class="kpi-sub">${c[2]}</div><br><span class="tag ${c[3]}">${c[4]}</span></div>`).join('')}</div>`+
+ `<div class="grid three" style="margin-top:16px">${traffic.map(t=>`<div class="card compact"><span class="tag ${t[3]}">${t[1]}</span><h4>${t[0]}</h4><p class="muted">${t[2]}</p></div>`).join('')}</div>`+
+ `<div class="grid two" style="margin-top:16px"><div class="card chart"><h4>Ingresos, EBITDA y utilidad neta</h4><canvas id="chart-main"></canvas></div><div class="card chart"><h4>Márgenes históricos</h4><canvas id="chart-margins"></canvas></div><div class="card chart small"><h4>Estructura de costos 2025</h4><canvas id="chart-costs"></canvas></div><div class="card chart small"><h4>Football field — Equity Value corregido</h4><canvas id="chart-football-mini"></canvas></div></div>`;
+}
+function renderQuality(){
+ const qRows=[
+  ['2014-2020','Parcial / histórico','Usable para tendencia, no para valoración principal','Ámbar'],['2021','No disponible','Debe reconstruirse antes de venta formal','Rojo'],['2022-2024','Mejor calidad relativa','Base para normalización, pero requiere conciliación','Ámbar'],['EERR 2025','Disponible','Útil para performance, requiere respaldo contable','Ámbar'],['Balance 2025','No disponible','No se puede validar caja, deuda, working capital ni equity value','Rojo'],['Caja neta 2024','Disponible como proxy','No reconocer 100% hasta cierre o certificación bancaria','Ámbar'],['Inventario 2024','Disponible','Debe auditarse realizabilidad, rotación y obsolescencia','Ámbar'],['Deuda bancaria','Proxy disponible','Validar cartolas, certificados y deuda tributaria','Ámbar']
+ ];
+ const normRows=[['Revenue normalizado',D.revNorm/1e6,'Promedio ponderado 2022-2025'],['EBITDA reportado normalizado',D.ebitdaReported/1e6,'Promedio ponderado 2022-2025'],['Haircut calidad/volatilidad EBITDA',D.ebitdaReported*.10/1e6,'Descuento 10% por volatilidad, 2021 ausente y no auditoría'],['EBITDA normalizado usado',D.ebitdaNorm/1e6,'Base de múltiplos'],['EBIT normalizado',D.ebitNorm/1e6,'Base NOPAT'],['NOPAT normalizado',D.nopat/1e6,'EBIT normalizado x (1 - tasa efectiva asumida)'],['D&A normalizada',D.daNorm/1e6,'Promedio ponderado'],['Capex mantenimiento',D.maintCapex/1e6,'Mayor entre D&A y 2,5% ventas'],['Reserva capital de trabajo',D.nwcReserve/1e6,'2,0% de ventas normalizadas'],['FCFF normalizado',D.fcffNorm/1e6,'Base DCF corregido']];
+ document.getElementById('quality').innerHTML=title('Calidad de datos y normalizaciones críticas','La valoración se rebaja porque no se puede vender una empresa sólo con el mejor año aislado')+
+ `<div class="note bad"><h4>Advertencia profesional</h4><p>El modelo no debe presentarse como fairness opinion. 2021 no está disponible y el balance 2025 está incompleto; por lo tanto, caja, deuda neta, capital de trabajo y equity value deben considerarse proxies hasta due diligence.</p></div>`+
+ tableWrap('Matriz de calidad de información','Efecto directo sobre descuento de riesgo',`<thead><tr><th>Bloque</th><th>Estado</th><th>Uso recomendado</th><th>Semáforo</th></tr></thead><tbody>${qRows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td><span class="tag ${r[3]==='Rojo'?'bad':'warn'}">${r[3]}</span></td></tr>`).join('')}</tbody>`)+
+ tableWrap('Puente de normalización financiera','Cifras en CLP millones',`<thead><tr><th>Ajuste</th><th>CLP MM</th><th>Comentario</th></tr></thead><tbody>${normRows.map(r=>`<tr><td>${r[0]}</td><td>${fMM(r[1],1)}</td><td>${r[2]}</td></tr>`).join('')}</tbody>`);
+}
+let gid=0;
+function renderEERR(){
+ let body=''; const sec=t=>body+=`<tr class="sec"><td colspan="${NY+1}">${t}</td></tr>`;
+ const exp=(label,arr,klass='')=>{const id='g'+(++gid);body+=`<tr class="${klass}"><td><button class="exp" onclick="toggleRows('${id}',this)">▶</button>${label}</td>${arr.map(v=>`<td>${fM(v)}</td>`).join('')}</tr>`;return id};
+ const sub=(id,label,arr,type='subrow')=>body+=`<tr class="${type}" data-group="${id}"><td>${label}</td>${arr.map(v=>`<td>${fM(v)}</td>`).join('')}</tr>`;
+ const cat=(parentId,label,arr)=>{const id='c'+(++gid);body+=`<tr class="catrow" data-group="${parentId}"><td><button class="exp" onclick="toggleCat('${id}',this,event)">▶</button>${label}</td>${arr.map(v=>`<td>${fM(v)}</td>`).join('')}</tr>`;return id};
+ sec('Ingresos de explotación'); let gi=exp('Ingresos por ventas del giro',IS.rev,'total');DT.ingresos.forEach(r=>sub(gi,r.l,r.d));
+ sec('Costo de ventas'); let gc=exp('(-) Costo de ventas',IS.cogs.map(v=>v==null?null:-v));DT.cogs.forEach(r=>sub(gc,r.l,r.d.map(v=>v==null?null:-Math.abs(v))));
+ body+=row('Margen bruto',IS.gp,fM,'hi')+row('% Margen bruto',Y.map((_,i)=>pct(IS.gp[i],IS.rev[i])),fP,'');
+ sec('Gastos de administración y ventas'); let gs=exp('(-) SGA total',IS.sga.map(v=>v==null?null:-v));
+ DT.sga.forEach(c=>{let cid=cat(gs,c.cat,c.totals.map(v=>v==null?null:-v));c.items.forEach(it=>sub(cid,it.l,it.d.map(v=>v==null?null:-Math.abs(v)),'itemrow'))});
+ body+=row('(-) Depreciación y amortización',IS.da.map(v=>v==null?null:-v),fM,'')+row('EBIT',IS.ebit,fM,'hi')+row('% Margen EBIT',Y.map((_,i)=>pct(IS.ebit[i],IS.rev[i])),fP,'')+row('EBITDA',IS.ebitda,fM,'total')+row('% Margen EBITDA',Y.map((_,i)=>pct(IS.ebitda[i],IS.rev[i])),fP,'');
+ sec('Resultado no operacional'); let gn=exp('Resultado fuera de explotación neto',IS.nop);DT.nop.forEach(r=>sub(gn,r.l,r.d));
+ body+=row('Resultado antes de impuestos',IS.ebt,fM,'total')+row('Utilidad neta',IS.net,fM,'net')+row('% Margen neto',Y.map((_,i)=>pct(IS.net[i],IS.rev[i])),fP,'');
+ const margins=row('Margen bruto %',Y.map((_,i)=>pct(IS.gp[i],IS.rev[i])),fP)+row('Margen EBITDA %',Y.map((_,i)=>pct(IS.ebitda[i],IS.rev[i])),fP)+row('Margen EBIT %',Y.map((_,i)=>pct(IS.ebit[i],IS.rev[i])),fP)+row('Margen neto %',Y.map((_,i)=>pct(IS.net[i],IS.rev[i])),fP)+row('COGS / Ingresos %',Y.map((_,i)=>pct(IS.cogs[i],IS.rev[i])),fP)+row('SGA / Ingresos %',Y.map((_,i)=>pct(IS.sga[i],IS.rev[i])),fP)+row('D&A / Ingresos %',Y.map((_,i)=>pct(IS.da[i],IS.rev[i])),fP);
+ document.getElementById('eerr').innerHTML=title('Estado de resultados','Tabla expandible con subcuentas principales')+`<div class="note warn"><b>Uso correcto:</b> usar 2025 para lectura operacional; usar EBITDA/FCFF normalizados para valoración.</div>`+tableWrap('Estado de Resultados expandible','Valores en CLP',head()+`<tbody>${body}</tbody>`,`<button class="mini-btn" onclick="expandAll(true)">Expandir</button><button class="mini-btn" onclick="expandAll(false)">Colapsar</button>`)+tableWrap('Márgenes clave','Common-size P&L',head('Indicador')+`<tbody>${margins}</tbody>`)+`<div class="grid two"><div class="card chart"><h4>Ingresos vs COGS</h4><canvas id="chart-rev-cogs"></canvas></div><div class="card chart"><h4>Crecimiento de ventas YoY</h4><canvas id="chart-yoy"></canvas></div></div>`;
+}
+function toggleRows(id,btn){const open=btn.textContent==='▼';document.querySelectorAll(`[data-group="${id}"]`).forEach(r=>r.classList.toggle('open',!open));btn.textContent=open?'▶':'▼'}
+function toggleCat(id,btn,e){e.stopPropagation();const open=btn.textContent==='▼';document.querySelectorAll(`[data-group="${id}"]`).forEach(r=>r.classList.toggle('open',!open));btn.textContent=open?'▶':'▼'}
+function expandAll(on){document.querySelectorAll('.subrow,.catrow,.itemrow').forEach(r=>r.classList.toggle('open',on));document.querySelectorAll('.exp').forEach(b=>b.textContent=on?'▼':'▶')}
+function renderBalance(){
+ let body=''; const sec=t=>body+=`<tr class="sec"><td colspan="${NY+1}">${t}</td></tr>`;
+ sec('Activos'); body+=row('Efectivo y equivalentes',BS.cash)+row('Deudores comerciales',BS.ar)+row('Inventarios',BS.inv)+row('Otros activos corrientes',BS.oca)+row('Total activos corrientes',BS.ca,fM,'total')+row('PP&E neto',BS.ppen)+row('Otros activos no corrientes',BS.onca)+row('Total activos no corrientes',Y.map((_,i)=>BS.ppen[i]==null||BS.onca[i]==null?null:BS.ppen[i]+BS.onca[i]),fM,'total')+row('Total activos',BS.ta,fM,'net');
+ sec('Pasivos y patrimonio'); body+=row('Cuentas por pagar',BS.ap)+row('Deuda financiera corto plazo',BS.std)+row('Otros pasivos corrientes',BS.ocl)+row('Total pasivos corrientes',BS.cl,fM,'total')+row('Deuda financiera largo plazo',BS.ltd)+row('Total pasivos',BS.tl,fM,'total')+row('Patrimonio total',BS.eq,fM,'hi')+row('Total pasivos + patrimonio',Y.map((_,i)=>BS.tl[i]==null||BS.eq[i]==null?null:BS.tl[i]+BS.eq[i]),fM,'net');
+ document.getElementById('balance').innerHTML=title('Balance general','2025 pendiente; no usar caja/deuda 2024 como verdad de cierre')+`<div class="note bad">El balance 2025 está N/D. Esto impide validar equity value final, working capital peg y deuda neta al cierre de compraventa.</div>`+tableWrap('Balance General','CLP',head()+`<tbody>${body}</tbody>`)+`<div class="grid two"><div class="card chart"><h4>Composición del activo</h4><canvas id="chart-assets"></canvas></div><div class="card chart"><h4>Pasivos y patrimonio</h4><canvas id="chart-liab"></canvas></div></div>`;
+}
+function renderCashflow(){
+ const cfo=Y.map((_,i)=>{if(i===0)return IS.net[i];const v=[IS.net[i],IS.da[i],ndelta(BS.ar,i),ndelta(BS.inv,i),ndelta(BS.oca,i),delta(BS.ap,i),delta(BS.ocl,i)];return v.every(x=>x!=null)?v.reduce((s,x)=>s+x,0):null});
+ const capex=Y.map((_,i)=>i===0||BS.ppen[i]==null||BS.ppen[i-1]==null?null:-(BS.ppen[i]-BS.ppen[i-1]+(IS.da[i]||0)));
+ const fcff=Y.map((_,i)=>fcffReported(i));
+ let cfBody=row('Utilidad neta',IS.net)+row('+ D&A',IS.da)+row('Disminución/(aumento) de AR',Y.map((_,i)=>ndelta(BS.ar,i)))+row('Disminución/(aumento) inventario',Y.map((_,i)=>ndelta(BS.inv,i)))+row('Disminución/(aumento) otros AC',Y.map((_,i)=>ndelta(BS.oca,i)))+row('Aumento/(disminución) proveedores',Y.map((_,i)=>delta(BS.ap,i)))+row('Aumento/(disminución) otros PC',Y.map((_,i)=>delta(BS.ocl,i)))+row('CFO proxy',cfo,fM,'total')+row('CAPEX estimado',capex)+row('Variación deuda financiera',Y.map((_,i)=>{const a=delta(BS.std,i),b=delta(BS.ltd,i);return a==null&&b==null?null:nz(a)+nz(b)}))+row('Variación neta de efectivo',Y.map((_,i)=>delta(BS.cash,i)),fM,'net');
+ let fcfBody=row('EBIT',IS.ebit)+row('(-) Impuesto operacional teórico',Y.map((_,i)=>IS.ebit[i]==null?null:-Math.max(0,IS.ebit[i]*TAX_RATE)))+row('+ D&A',IS.da)+row('(-) CAPEX real/proxy',capex)+row('(-) ΔNWC operativo',Y.map((_,i)=>{const parts=[delta(BS.ar,i),delta(BS.inv,i),delta(BS.oca,i),-delta(BS.ap,i),-delta(BS.ocl,i)].filter(v=>v!=null);return i===0||!parts.length?null:-parts.reduce((s,x)=>s+x,0)}))+row('FCFF corregido',fcff,fM,'hi')+row('FCFF normalizado para valoración',Y.map((_,i)=>i===11?D.fcffNorm:null),fM,'net');
+ document.getElementById('cashflow').innerHTML=title('Flujo de caja y FCFF','Se reemplaza proxy EBITDA por FCFF después de impuestos, capex y capital de trabajo')+`<div class="note warn"><b>Mejora crítica:</b> el DCF ya no capitaliza EBITDA 2025 aislado. Se usa FCFF normalizado y se explicitan impuestos, reinversión y capital de trabajo.</div>`+tableWrap('Flujo de efectivo proxy','Método indirecto desde variaciones de balance',head()+`<tbody>${cfBody}</tbody>`)+tableWrap('Free Cash Flow to Firm corregido','FCFF profesional para valoración',head()+`<tbody>${fcfBody}</tbody>`)+`<div class="grid two"><div class="card chart"><h4>EBITDA vs FCFF</h4><canvas id="chart-fcf"></canvas></div><div class="card chart"><h4>Caja histórica</h4><canvas id="chart-cash"></canvas></div></div>`;
+}
+function makeRatioRows(defs){return defs.map(d=>row(d[0],Y.map((_,i)=>d[1](i)),d[2]||fX)).join('')}
+function renderRatios(){
+ const prof=[['Margen bruto',i=>pct(IS.gp[i],IS.rev[i]),fP],['Margen EBITDA',i=>pct(IS.ebitda[i],IS.rev[i]),fP],['Margen EBIT',i=>pct(IS.ebit[i],IS.rev[i]),fP],['Margen neto',i=>pct(IS.net[i],IS.rev[i]),fP],['ROA',i=>pct(IS.net[i],avg2(BS.ta,i)),fP],['ROE',i=>BS.eq[i]>0?pct(IS.net[i],avg2(BS.eq,i)):null,fP],['ROCE',i=>{const ce=BS.ta[i]!=null&&BS.cl[i]!=null?BS.ta[i]-BS.cl[i]:null;return pct(IS.ebit[i],ce)},fP],['Asset turnover',i=>rat(IS.rev[i],avg2(BS.ta,i)),fX]];
+ const liq=[['Razón corriente',i=>rat(BS.ca[i],BS.cl[i]),fX],['Prueba ácida',i=>rat(nz(BS.cash[i])+nz(BS.ar[i]),BS.cl[i]),fX],['Razón efectivo',i=>rat(BS.cash[i],BS.cl[i]),fX],['Capital trabajo neto',i=>BS.ca[i]==null||BS.cl[i]==null?null:BS.ca[i]-BS.cl[i],fM],['CTN / ventas',i=>pct(BS.ca[i]==null||BS.cl[i]==null?null:BS.ca[i]-BS.cl[i],IS.rev[i]),fP]];
+ const act=[['DSO',i=>BS.ar[i]&&IS.rev[i]?BS.ar[i]/IS.rev[i]*365:null,fD],['DIO',i=>BS.inv[i]&&IS.cogs[i]?BS.inv[i]/IS.cogs[i]*365:null,fD],['DPO',i=>BS.ap[i]&&IS.cogs[i]?BS.ap[i]/IS.cogs[i]*365:null,fD],['CCC',i=>{const d=BS.ar[i]&&IS.rev[i]?BS.ar[i]/IS.rev[i]*365:null,di=BS.inv[i]&&IS.cogs[i]?BS.inv[i]/IS.cogs[i]*365:null,dp=BS.ap[i]&&IS.cogs[i]?BS.ap[i]/IS.cogs[i]*365:null;return d!=null&&di!=null&&dp!=null?d+di-dp:null},fD],['Rotación inventario',i=>rat(IS.cogs[i],avg2(BS.inv,i)),fX],['Rotación deudores',i=>rat(IS.rev[i],avg2(BS.ar,i)),fX]];
+ const lev=[['Total pasivos / patrimonio',i=>rat(BS.tl[i],BS.eq[i]),fX],['Total pasivos / activos',i=>pct(BS.tl[i],BS.ta[i]),fP],['Patrimonio / activos',i=>pct(BS.eq[i],BS.ta[i]),fP],['Deuda financiera neta',i=>BS.std[i]==null||BS.cash[i]==null?null:BS.std[i]+nz(BS.ltd[i])-BS.cash[i],fM],['Deuda neta / EBITDA',i=>{const nd=BS.std[i]==null||BS.cash[i]==null?null:BS.std[i]+nz(BS.ltd[i])-BS.cash[i];return IS.ebitda[i]>0?nd/IS.ebitda[i]:null},fX],['EBITDA / intereses',i=>INT[i]>0?IS.ebitda[i]/INT[i]:null,fX]];
+ const dup=[['F1 Margen neto',i=>pct(IS.net[i],IS.rev[i]),fP],['F2 Rotación activos',i=>rat(IS.rev[i],avg2(BS.ta,i)),fX],['F3 Multiplicador capital',i=>rat(avg2(BS.ta,i),avg2(BS.eq,i)),fX],['ROE DuPont 3F',i=>{const f1=rat(IS.net[i],IS.rev[i]),f2=rat(IS.rev[i],avg2(BS.ta,i)),f3=rat(avg2(BS.ta,i),avg2(BS.eq,i));return f1!=null&&f2!=null&&f3!=null?f1*f2*f3*100:null},fP],['Carga fiscal',i=>rat(IS.net[i],IS.ebt[i]),fX],['Carga interés',i=>rat(IS.ebt[i],IS.ebit[i]),fX],['Margen EBIT',i=>pct(IS.ebit[i],IS.rev[i]),fP],['ROE DuPont 5F',i=>{const g1=rat(IS.net[i],IS.ebt[i]),g2=rat(IS.ebt[i],IS.ebit[i]),g3=rat(IS.ebit[i],IS.rev[i]),f2=rat(IS.rev[i],avg2(BS.ta,i)),f3=rat(avg2(BS.ta,i),avg2(BS.eq,i));return [g1,g2,g3,f2,f3].every(x=>x!=null)?g1*g2*g3*f2*f3*100:null},fP]];
+ document.getElementById('ratios').innerHTML=title('Ratios financieros','Rentabilidad, liquidez, eficiencia, solvencia y DuPont')+tableWrap('I. Rentabilidad',null,head('Indicador')+`<tbody>${makeRatioRows(prof)}</tbody>`)+tableWrap('II. Liquidez',null,head('Indicador')+`<tbody>${makeRatioRows(liq)}</tbody>`)+tableWrap('III. Eficiencia / actividad',null,head('Indicador')+`<tbody>${makeRatioRows(act)}</tbody>`)+tableWrap('IV. Solvencia / apalancamiento',null,head('Indicador')+`<tbody>${makeRatioRows(lev)}</tbody>`)+tableWrap('V. DuPont',null,head('Indicador')+`<tbody>${makeRatioRows(dup)}</tbody>`)+`<div class="grid three"><div class="card chart small"><h4>Liquidez</h4><canvas id="chart-liq"></canvas></div><div class="card chart small"><h4>Ciclo conversión</h4><canvas id="chart-ccc"></canvas></div><div class="card chart small"><h4>Apalancamiento</h4><canvas id="chart-lev"></canvas></div></div>`;
+}
+function renderDebt(){
+ const measures={
+  'Based on (1) EBIDA Cash Flow / CFADS':Y.map((_,i)=>cfads(i)),
+  'Based on (2) EBITDA':IS.ebitda,
+  'Based on (3) Free Cash Flow':Y.map((_,i)=>fcffReported(i)),
+  'Based on (4) EBIT':IS.ebit
+ };
+ let body='';
+ Object.entries(measures).forEach(([name,arr])=>{const dc=debtCapacityByMeasure(arr);body+=`<tr class="sec"><td colspan="${NY+1}">${name}</td></tr>`+row('PV of Debt Capacity',dc.pv,fM,'hi')+row('Year to Maturity — Bank Debt Only',dc.bankYrs,fX)+row('Year to Maturity — Total Debt',dc.totalYrs,fX)});
+ const assumptions=`DSCR objetivo ${TARGET_DSCR.toFixed(2)}x · tasa deuda ${Math.round(BANK_RATE*100)}% · plazo ${TERM_YEARS} años · PV como anualidad de capacidad de servicio`;
+ document.getElementById('debt').innerHTML=title('Debt Capacity Measurements','Capacidad de deuda por cuatro bases de flujo')+`<div class="note warn"><b>Supuestos:</b> ${assumptions}. La matriz es una herramienta de estrés, no una oferta bancaria.</div>`+tableWrap('Debt Capacity Measurements',assumptions,head('Medición')+`<tbody>${body}</tbody>`)+`<div class="grid two"><div class="card chart"><h4>PV deuda por base 2024</h4><canvas id="chart-debtcap"></canvas></div><div class="card"><h4>Lectura profesional</h4><p class="muted">La capacidad de deuda mejora si se usa EBITDA 2025, pero un banco o comprador aplicará haircuts porque el balance 2025 no está disponible y el EBITDA 2025 aún debe probar recurrencia.</p><ul><li>Usar CFADS para bancos.</li><li>Usar FCFF para valoración.</li><li>No usar EBITDA bruto como única medida de deuda.</li></ul></div></div>`;
+}
+function renderScore(){
+ const S=scoreRows();
+ const body=S.rows.map(([label,arr,fmt,type])=>`<tr class="${type==='points'?'total':''}"><td>${label}</td>${arr.map(v=>`<td>${type==='points'?(fmt(v)==null?'<span class="nd">N/D</span>':fmt(v)):fmt(v)}</td>`).join('')}</tr>`).join('')+`<tr class="net"><td>Total Score</td>${S.pointsByYear.map(v=>`<td>${v}</td>`).join('')}</tr><tr><td>Financial condition</td>${S.pointsByYear.map(v=>`<td><span class="tag ${v>=140?'good':v>=90?'warn':'bad'}">${v>=140?'Fuerte':v>=90?'Media':'Débil'}</span></td>`).join('')}</tr>`;
+ document.getElementById('score').innerHTML=title('Financial quantitative evaluation','Scoring cuantitativo por liquidez, solvencia, rentabilidad, crecimiento y tamaño')+`<div class="note warn"><b>Interpretación:</b> el scoring 2025 queda incompleto en variables de balance porque no existe balance 2025. Esto debe mostrarse, no estimarse silenciosamente.</div>`+tableWrap('Financial quantitative evaluation','Puntajes internos de referencia, no rating crediticio externo',head('Métrica')+`<tbody>${body}</tbody>`)+`<div class="card chart"><h4>Total score histórico</h4><canvas id="chart-score"></canvas></div>`;
+}
+function renderProjections(){
+ const yrs=[2025,2026,2027,2028,2029,2030];
+ const scenarios={
+  acid:{name:'Ácido',growth:.02,ebitdaMargin:.09,fcfConv:.35},prudent:{name:'Prudente',growth:.05,ebitdaMargin:.105,fcfConv:.42},strategic:{name:'Estratégico',growth:.08,ebitdaMargin:.125,fcfConv:.48}
+ };
+ const actual2025=IS.rev[11]/1e6;
+ const normalizedBase=D.revNorm/1e6;
+ const proj={};
+ for(const [k,s] of Object.entries(scenarios)){
+  proj[k]=yrs.map((y,i)=>{
+    const rev=i===0?actual2025:normalizedBase*Math.pow(1+s.growth,i);
+    return {year:y,rev,ebitda:rev*s.ebitdaMargin,fcf:(rev*s.ebitdaMargin)*s.fcfConv,normalizedBase};
+  })
+ }
+ const hdr=`<thead><tr><th>Concepto</th>${yrs.map(y=>`<th>${y}</th>`).join('')}</tr></thead>`;
+ const rows=Object.entries(proj).map(([k,a])=>`<tr class="sec"><td colspan="${yrs.length+1}">${scenarios[k].name}</td></tr><tr><td>Ingresos</td>${a.map(x=>`<td>${fMM(x.rev,0)}</td>`).join('')}</tr><tr><td>EBITDA normalizado</td>${a.map(x=>`<td>${fMM(x.ebitda,0)}</td>`).join('')}</tr><tr><td>FCF estimado</td>${a.map(x=>`<td>${fMM(x.fcf,0)}</td>`).join('')}</tr>`).join('');
+ document.getElementById('projections').innerHTML=title('Proyecciones corregidas 2026-2030','Proyecciones desde venta normalizada ponderada; 2025 tiene mayor peso que 2024 y 2024 mayor que 2023')+`<div class="note warn"><b>Corrección metodológica:</b> 2025 se muestra como año real, pero 2026 parte desde una venta normalizada ponderada: 2022 = 10%, 2023 = 20%, 2024 = 30%, 2025 = 40%. Esto evita capitalizar 2025 completo como nuevo run-rate, pero reconoce que 2025 debe pesar más que los años anteriores.</div><div class="grid three"><div class="card"><span class="tag bad">Ácido</span><div class="price">2%</div><p class="muted">Crecimiento anual, margen EBITDA 9%, FCF conversion 35%.</p></div><div class="card"><span class="tag warn">Prudente</span><div class="price">5%</div><p class="muted">Crecimiento anual, margen EBITDA 10,5%, FCF conversion 42%.</p></div><div class="card"><span class="tag good">Estratégico</span><div class="price">8%</div><p class="muted">Sólo si se valida recurrencia, equipo, contratos y balance.</p></div></div>`+tableWrap('Proyección por escenarios','CLP millones',hdr+`<tbody>${rows}</tbody>`)+`<div class="grid two"><div class="card chart"><h4>Ingresos proyectados</h4><canvas id="chart-proj-rev"></canvas></div><div class="card chart"><h4>FCF proyectado</h4><canvas id="chart-proj-fcf"></canvas></div></div>`;
+ window.PROJ={yrs,proj};
+}
+function renderValuation(){
+ const rows=Object.entries(VAL).map(([k,v])=>`<tr><td>${v.name}</td><td>${fMM(v.eqDcf,0)}</td><td>${fMM(v.eqEbitda,0)}</td><td>${fMM(v.eqSales,0)}</td><td>${fMM(v.eqBook,0)}</td><td><b>${fMM(v.weighted,0)}</b></td><td>${fMM(v.netDebtAdj,0)}</td></tr>`).join('');
+ const rec=VAL.prudent.weighted, low=VAL.acid.weighted, high=VAL.strategic.weighted;
+ document.getElementById('valuation').innerHTML=title('Valoración de empresa corregida','Equity Value estimado para venta en Chile bajo información actual')+
+ `<div class="valuation-band"><div class="card"><span class="tag warn">Precio de salida recomendado</span><div class="price">${fMM(Math.max(rec*1.35,high*.75),0)}</div><p class="range">Rango de cierre probable: ${fMM(Math.max(low,rec*.75),0)} – ${fMM(Math.min(high,rec*1.35),0)}</p><p class="muted">Se recomienda salir con un precio superior al valor prudente, pero no defender un DCF optimista como precio esperado. El comprador castigará datos incompletos, dependencia operativa y falta de balance 2025.</p></div><div class="card"><span class="tag bad">Piso no-go recomendado</span><div class="price">${fMM(Math.max(80,low*.75),0)}</div><p class="range">Valor prudente ponderado: ${fMM(rec,0)} · Estratégico condicionado: ${fMM(high,0)}</p><p class="muted">Valores sobre el rango estratégico requieren auditoría, balance 2025, caja/deuda certificada, inventario validado y evidencia de recurrencia comercial.</p></div></div>`+
+ tableWrap('Football field corregido','Equity Value CLP millones',`<thead><tr><th>Escenario</th><th>DCF</th><th>EV/EBITDA</th><th>EV/Sales</th><th>Book value ajustado</th><th>Valor ponderado</th><th>Deuda neta reconocida</th></tr></thead><tbody>${rows}</tbody>`)+
+ `<div class="grid two"><div class="card chart"><h4>Football field</h4><canvas id="chart-football"></canvas></div><div class="card"><h4>Supuestos clave</h4><table style="min-width:0"><tbody><tr><td>EBITDA normalizado</td><td>${fMM(D.ebitdaNorm/1e6,1)}</td></tr><tr><td>FCFF normalizado</td><td>${fMM(D.fcffNorm/1e6,1)}</td></tr><tr><td>WACC ácido / prudente / estratégico</td><td>30% / 24% / 19%</td></tr><tr><td>g terminal</td><td>-1% / 0% / 1,5%</td></tr><tr><td>EV/EBITDA</td><td>2,75x / 4,00x / 5,75x</td></tr><tr><td>Reconocimiento caja 2024</td><td>0% / 50% / 100%</td></tr></tbody></table></div></div>`;
+}
+function renderRecommendations(){
+ const recs=[
+  ['Completar balance 2025','Caja, bancos, AR, inventario, proveedores, deuda financiera, deuda tributaria, patrimonio y contingencias. Sin esto, el precio se castiga.'],['Reconstruir 2021','F29, renta, cartolas, compras/ventas, inventario y deuda. Mantener 2021 como N/D baja credibilidad frente a compradores.'],['Auditoría / revisión limitada','Al menos revisión externa de 2022-2025. Sube valor percibido y reduce descuento por calidad de información.'],['Normalizar EBITDA','Separar gastos de dueño, gastos extraordinarios, leasing, FX, arriendos relacionados, sueldos de mercado y partidas no recurrentes.'],['Data room de venta','Estados financieros, cartolas, contratos, clientes, proveedores, importaciones, inventario, deuda, impuestos, libros y conciliaciones.'],['Working capital peg','Definir capital de trabajo objetivo para evitar rebajas de precio al cierre.'],['Validar recurrencia 2025','Cartera B2B, tasa de recompra, concentración top 10 clientes, margen por canal y contratos.'],['Estrategia de precio','Usar valor de salida, rango de cierre y piso no-go. No vender con expectativa de DCF optimista.']
+ ];
+ document.getElementById('recommendations').innerHTML=title('Opinión profesional y recomendaciones','Qué debe corregirse antes de vender Kawas Coffee')+`<div class="note good"><h4>Conclusión</h4><p>Kawas tiene valor, trayectoria y recuperación, pero la valoración defendible no debe basarse en el mejor año aislado. La tesis profesional debe apoyarse en EBITDA normalizado, FCFF conservador, deuda neta validada, capital de trabajo y evidencia comercial recurrente.</p></div><div class="risk-list">${recs.map(r=>`<div class="risk"><b>${r[0]}</b><span class="muted">${r[1]}</span></div>`).join('')}</div>`+
+ tableWrap('Checklist de mejoras antes de proceso M&A','Impacto esperado en precio',`<thead><tr><th>Acción</th><th>Impacto en riesgo</th><th>Impacto en valoración</th></tr></thead><tbody><tr><td>Auditoría externa 2022-2025</td><td>Reduce descuento de información</td><td>Alto</td></tr><tr><td>Balance 2025 validado</td><td>Permite calcular Equity Value real</td><td>Muy alto</td></tr><tr><td>Reporte de clientes y recurrencia</td><td>Reduce riesgo de ingresos</td><td>Alto</td></tr><tr><td>Inventario auditado</td><td>Reduce ajuste de working capital</td><td>Medio-alto</td></tr><tr><td>Normalización de gastos de dueño</td><td>Defiende EBITDA ajustado</td><td>Alto</td></tr><tr><td>Hedging USD/CLP</td><td>Reduce volatilidad de margen bruto</td><td>Medio</td></tr></tbody>`);
 }
 
-// ── Traffic Lights ────────────────────────────────────────────────
-function buildTraffic() {
-  const last=NY-1, prev=NY-2;
-  const cr = rt(BS.current_assets[prev],BS.current_liab[prev]);
-  const de = rt(BS.total_liab[prev],BS.equity[prev]);
-  const nm = p(IS.net[last],IS.revenue[last]);
-  const gm = p(IS.gross[last],IS.revenue[last]);
-  const em = p(IS.ebitda[last],IS.revenue[last]);
-  const cash = BS.cash[prev];
-  const std  = BS.std[prev];
-  const netd = (std - cash) / 1e6;
-  const dne  = rt(netd, IS.ebitda[last]/1e6);
+function renderAll(){renderDashboard();renderQuality();renderEERR();renderBalance();renderCashflow();renderRatios();renderDebt();renderScore();renderProjections();renderValuation();renderRecommendations();setTimeout(initCharts,80)}
 
-  const lights = [
-    {label:'Razón Corriente',val:fmtX(cr),cls:cr>=1.5?'green':cr>=1.0?'amber':'red',desc:'2024: '+fmtX(cr)+' (>1.5x = verde)'},
-    {label:'Margen Neto 2025',val:fmtP(nm),cls:nm>=10?'green':nm>=5?'amber':'red',desc:fmtP(nm)+' (>10% = verde)'},
-    {label:'Margen Bruto 2025',val:fmtP(gm),cls:gm>=35?'green':gm>=25?'amber':'red',desc:fmtP(gm)+' (>35% = verde)'},
-    {label:'Margen EBITDA 2025',val:fmtP(em),cls:em>=12?'green':em>=7?'amber':'red',desc:fmtP(em)+' (>12% = verde)'},
-    {label:'Deuda/Patrimonio 2024',val:fmtX(de),cls:de<=1?'green':de<=2?'amber':'red',desc:fmtX(de)+' (<1x = verde)'},
-    {label:'Deuda Neta/EBITDA',val:dne<0?'Caja Neta':fmtX(dne),cls:dne<0?'green':dne<=2?'amber':'red',desc:'Posición de caja neta = óptimo'},
-    {label:'Crecimiento Ingresos 2025',val:'+45.9%',cls:'green',desc:'2025 vs 2024: récord histórico'},
-    {label:'Calificación General',val:'★★★★☆',cls:'amber',desc:'Empresa sólida con mejora progresiva'},
-  ];
-
-  document.getElementById('traffic-lights').innerHTML = lights.map(l=>`
-    <div class="tl-item">
-      <div class="tl-dot ${l.cls}"></div>
-      <div>
-        <div class="tl-label">${l.label}: ${l.val}</div>
-        <div class="tl-val">${l.desc}</div>
-      </div>
-    </div>`).join('');
+// ---------- charts ----------
+const PAL={coffee:'#3a2417',latte:'#b9783f',green:'#17643a',red:'#9b2226',amber:'#a97908',blue:'#244c7c',purple:'#6b3fa0',grey:'#9a8e83'};
+const M=a=>a.map(v=>v==null?null:v/1e6);
+const CHARTS={};
+function chart(id,cfg){
+ const el=document.getElementById(id);
+ if(!el||!window.Chart)return;
+ const page=el.closest('.page');
+ if(page && !page.classList.contains('active'))return;
+ if(CHARTS[id]){CHARTS[id].destroy();delete CHARTS[id];}
+ const ctx=el.getContext('2d');
+ CHARTS[id]=new Chart(ctx,cfg);
+ requestAnimationFrame(()=>CHARTS[id]&&CHARTS[id].resize());
+}
+const baseOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12,font:{size:11}}}},scales:{x:{grid:{color:'#efe4d8'},ticks:{font:{size:10}}},y:{grid:{color:'#efe4d8'},ticks:{font:{size:10}}}}};
+function initCharts(){
+ chart('chart-main',{data:{labels:YL,datasets:[{type:'bar',label:'Ingresos',data:M(IS.rev),backgroundColor:PAL.coffee,borderRadius:4},{type:'line',label:'EBITDA',data:M(IS.ebitda),borderColor:PAL.latte,backgroundColor:PAL.latte,tension:.25},{type:'line',label:'Utilidad neta',data:M(IS.net),borderColor:PAL.green,backgroundColor:'rgba(23,100,58,.12)',fill:true,tension:.25,yAxisID:'y1'}]},options:{...baseOpts,scales:{...baseOpts.scales,y1:{position:'right',grid:{drawOnChartArea:false}}}}});
+ chart('chart-margins',{type:'line',data:{labels:YL,datasets:[['Margen bruto',IS.gp,PAL.green],['EBITDA',IS.ebitda,PAL.latte],['EBIT',IS.ebit,PAL.blue],['Neto',IS.net,PAL.red]].map(x=>({label:x[0],data:Y.map((_,i)=>pct(x[1][i],IS.rev[i])),borderColor:x[2],tension:.25}))},options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{callback:v=>v+'%'}}}}});
+ chart('chart-costs',{type:'doughnut',data:{labels:['COGS','SGA','D&A','No operacional','Utilidad'],datasets:[{data:[IS.cogs[11],IS.sga[11],IS.da[11],Math.abs(IS.nop[11]),IS.net[11]].map(v=>v/1e6),backgroundColor:[PAL.red,PAL.grey,PAL.purple,PAL.amber,PAL.green]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+ const ffLabels=['Ácido','Prudente','Estratégico']; const ffData=[VAL.acid.weighted,VAL.prudent.weighted,VAL.strategic.weighted];
+ chart('chart-football-mini',{type:'bar',data:{labels:ffLabels,datasets:[{label:'Equity ponderado',data:ffData,backgroundColor:[PAL.red,PAL.amber,PAL.green],borderRadius:5}]},options:baseOpts});
+ chart('chart-rev-cogs',{type:'bar',data:{labels:YL,datasets:[{label:'Ingresos',data:M(IS.rev),backgroundColor:PAL.coffee,borderRadius:4},{label:'COGS',data:M(IS.cogs),backgroundColor:PAL.red,borderRadius:4}]},options:baseOpts});
+ chart('chart-yoy',{type:'bar',data:{labels:YL,datasets:[{label:'YoY ingresos',data:Y.map((_,i)=>i===0||IS.rev[i]==null||IS.rev[i-1]==null?null:pct(IS.rev[i]-IS.rev[i-1],IS.rev[i-1])),backgroundColor:Y.map((_,i)=>i>0&&IS.rev[i]!=null&&IS.rev[i-1]!=null&&IS.rev[i]>=IS.rev[i-1]?PAL.green:PAL.red),borderRadius:4}]},options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{callback:v=>v+'%'}}}}});
+ chart('chart-assets',{type:'bar',data:{labels:YL,datasets:[{label:'Activos corrientes',data:M(BS.ca),backgroundColor:PAL.blue},{label:'Activos no corrientes',data:Y.map((_,i)=>BS.ta[i]==null||BS.ca[i]==null?null:(BS.ta[i]-BS.ca[i])/1e6),backgroundColor:PAL.coffee}]},options:{...baseOpts,scales:{x:{stacked:true},y:{stacked:true,grid:{color:'#efe4d8'}}}}});
+ chart('chart-liab',{type:'bar',data:{labels:YL,datasets:[{label:'Pasivos',data:M(BS.tl),backgroundColor:PAL.red},{label:'Patrimonio',data:M(BS.eq),backgroundColor:PAL.green}]},options:{...baseOpts,scales:{x:{stacked:true},y:{stacked:true,grid:{color:'#efe4d8'}}}}});
+ chart('chart-fcf',{type:'bar',data:{labels:YL,datasets:[{label:'EBITDA',data:M(IS.ebitda),backgroundColor:PAL.latte},{label:'FCFF corregido',data:M(Y.map((_,i)=>fcffReported(i))),backgroundColor:PAL.green}]},options:baseOpts});
+ chart('chart-cash',{type:'line',data:{labels:YL,datasets:[{label:'Caja',data:M(BS.cash),borderColor:PAL.green,backgroundColor:'rgba(23,100,58,.12)',fill:true,tension:.25}]},options:baseOpts});
+ chart('chart-liq',{type:'line',data:{labels:YL,datasets:[{label:'Razón corriente',data:Y.map((_,i)=>rat(BS.ca[i],BS.cl[i])),borderColor:PAL.blue,tension:.25},{label:'Prueba ácida',data:Y.map((_,i)=>rat(nz(BS.cash[i])+nz(BS.ar[i]),BS.cl[i])),borderColor:PAL.latte,tension:.25}]},options:baseOpts});
+ const dso=Y.map((_,i)=>BS.ar[i]&&IS.rev[i]?BS.ar[i]/IS.rev[i]*365:null),dio=Y.map((_,i)=>BS.inv[i]&&IS.cogs[i]?BS.inv[i]/IS.cogs[i]*365:null),dpo=Y.map((_,i)=>BS.ap[i]&&IS.cogs[i]?BS.ap[i]/IS.cogs[i]*365:null),ccc=Y.map((_,i)=>dso[i]!=null&&dio[i]!=null&&dpo[i]!=null?dso[i]+dio[i]-dpo[i]:null);
+ chart('chart-ccc',{type:'line',data:{labels:YL,datasets:[{label:'DSO',data:dso,borderColor:PAL.blue,tension:.25},{label:'DIO',data:dio,borderColor:PAL.amber,tension:.25},{label:'DPO',data:dpo,borderColor:PAL.green,tension:.25},{label:'CCC',data:ccc,borderColor:PAL.red,tension:.25}]},options:baseOpts});
+ chart('chart-lev',{type:'line',data:{labels:YL,datasets:[{label:'D/E',data:Y.map((_,i)=>rat(BS.tl[i],BS.eq[i])),borderColor:PAL.red,tension:.25},{label:'Deuda neta/EBITDA',data:Y.map((_,i)=>{const nd=BS.std[i]==null||BS.cash[i]==null?null:BS.std[i]+nz(BS.ltd[i])-BS.cash[i];return IS.ebitda[i]>0?nd/IS.ebitda[i]:null}),borderColor:PAL.green,tension:.25}]},options:baseOpts});
+ const cap2024=Object.entries({'CFADS':cfads(10),'EBITDA':IS.ebitda[10],'FCFF':fcffReported(10),'EBIT':IS.ebit[10]}), af=annuityFactor(BANK_RATE,TERM_YEARS);
+ chart('chart-debtcap',{type:'bar',data:{labels:cap2024.map(x=>x[0]),datasets:[{label:'PV capacidad deuda 2024',data:cap2024.map(x=>Math.max(0,x[1]/TARGET_DSCR)*af/1e6),backgroundColor:PAL.blue,borderRadius:5}]},options:baseOpts});
+ const S=scoreRows();chart('chart-score',{type:'bar',data:{labels:YL,datasets:[{label:'Score total',data:S.pointsByYear,backgroundColor:S.pointsByYear.map(v=>v>=140?PAL.green:v>=90?PAL.amber:PAL.red),borderRadius:4}]},options:baseOpts});
+ if(window.PROJ){chart('chart-proj-rev',{type:'line',data:{labels:window.PROJ.yrs,datasets:Object.entries(window.PROJ.proj).map(([k,a])=>({label:k,data:a.map(x=>x.rev),borderColor:k==='acid'?PAL.red:k==='prudent'?PAL.amber:PAL.green,tension:.25}))},options:baseOpts});chart('chart-proj-fcf',{type:'bar',data:{labels:window.PROJ.yrs,datasets:Object.entries(window.PROJ.proj).map(([k,a])=>({label:k,data:a.map(x=>x.fcf),backgroundColor:k==='acid'?PAL.red:k==='prudent'?PAL.amber:PAL.green}))},options:baseOpts})}
+ chart('chart-football',{type:'bar',data:{labels:['Ácido','Prudente','Estratégico'],datasets:[{label:'DCF',data:[VAL.acid.eqDcf,VAL.prudent.eqDcf,VAL.strategic.eqDcf],backgroundColor:PAL.blue},{label:'EV/EBITDA',data:[VAL.acid.eqEbitda,VAL.prudent.eqEbitda,VAL.strategic.eqEbitda],backgroundColor:PAL.latte},{label:'EV/Sales',data:[VAL.acid.eqSales,VAL.prudent.eqSales,VAL.strategic.eqSales],backgroundColor:PAL.grey},{label:'Book adj.',data:[VAL.acid.eqBook,VAL.prudent.eqBook,VAL.strategic.eqBook],backgroundColor:PAL.green}]},options:baseOpts});
 }
 
-// ── EERR Table ────────────────────────────────────────────────────
-function buildEERR_OLD_DISABLED() {
-  const hdr = document.getElementById('eerr-hdr');
-  if(!hdr) return;
-  hdr.innerHTML = '<th>Concepto  (CLP)</th>' + yrLabel.map(y=>`<th>${y}</th>`).join('');
-
-  const fmtClp = v => {
-    if(v===null) return '<span class="nd">N/D</span>';
-    const m = v/1e6;
-    const str = Math.abs(m).toFixed(1)+'M';
-    return v<0?`<span class="neg">(${str})</span>`:str;
-  };
-
-  const rows = [
-    {cls:'sec-row',lbl:'INGRESOS DE EXPLOTACIÓN',data:null},
-    {lbl:'Ingresos por Ventas del Giro',data:'revenue'},
-    {cls:'tot-row',lbl:'TOTAL INGRESOS',data:'revenue'},
-    {cls:'sec-row',lbl:'COSTO DE VENTAS',data:null},
-    {lbl:'(-) Costo de Ventas',data:'cogs',neg:true},
-    {cls:'hi-row',lbl:'MARGEN BRUTO',data:'gross'},
-    {cls:'sub-row',lbl:'  % Margen Bruto',data:'gross_pct',fmt:'pct'},
-    {cls:'sec-row',lbl:'GASTOS OPERACIONALES',data:null},
-    {lbl:'(-) Gastos Adm. y Ventas (excl. D&A)',data:'sga',neg:true},
-    {lbl:'(-) Depreciación y Amortización',data:'da',neg:true},
-    {cls:'tot-row',lbl:'TOTAL GASTOS OPERACIONALES',data:'opex_tot',derived:true},
-    {cls:'hi-row',lbl:'RESULTADO OPERACIONAL  (EBIT)',data:'ebit'},
-    {cls:'sub-row',lbl:'  % Margen EBIT',data:'ebit_pct',fmt:'pct'},
-    {cls:'hi-row',lbl:'EBITDA  (EBIT + D&A)',data:'ebitda',style:'background:var(--amber-lt)'},
-    {cls:'sub-row',lbl:'  % Margen EBITDA',data:'ebitda_pct',fmt:'pct'},
-    {cls:'sec-row',lbl:'RESULTADO NO OPERACIONAL',data:null},
-    {lbl:'Resultado Fuera de Explotación (neto)',data:'non_op'},
-    {cls:'tot-row',lbl:'RESULTADO ANTES DE IMPUESTOS (EBT)',data:'ebt'},
-    {lbl:'(-) Impuesto a la Renta',data:'tax',neg:true},
-    {cls:'net-row',lbl:'★  UTILIDAD (PÉRDIDA) DEL EJERCICIO',data:'net'},
-    {cls:'sub-row',lbl:'  % Margen Neto',data:'net_pct',fmt:'pct'},
-  ];
-
-  const tbody = document.getElementById('eerr-body');
-  tbody.innerHTML = rows.map(row=>{
-    if(!row.data&&row.cls==='sec-row') return `<tr class="sec-row"><td colspan="${NY+1}">${row.lbl}</td></tr>`;
-    let cells='';
-    for(let i=0;i<NY;i++){
-      let v=null;
-      if(row.data==='gross_pct') v=p(IS.gross[i],IS.revenue[i]);
-      else if(row.data==='ebit_pct') v=p(IS.ebit[i],IS.revenue[i]);
-      else if(row.data==='ebitda_pct') v=p(IS.ebitda[i],IS.revenue[i]);
-      else if(row.data==='net_pct') v=p(IS.net[i],IS.revenue[i]);
-      else if(row.data==='opex_tot') v=IS.sga[i]!=null&&IS.da[i]!=null?-(IS.sga[i]+IS.da[i]):null;
-      else if(IS[row.data]) v=IS[row.data][i];
-
-      if(row.fmt==='pct') cells+=`<td>${fmtP(v)}</td>`;
-      else if(row.neg) cells+=`<td>${v==null?'<span class="nd">N/D</span>':(v<0?'<span class="pos">'+Math.abs(v/1e6).toFixed(1)+'M</span>':'<span class="neg">('+( v/1e6).toFixed(1)+'M)</span>')}</td>`;
-      else cells+=`<td>${fmtClp(v)}</td>`;
-    }
-    const st = row.style?` style="${row.style}"`:'';
-    return `<tr class="${row.cls||''}"${st}><td>${row.lbl}</td>${cells}</tr>`;
-  }).join('');
-
-  // Margin table
-  const mhdr = document.getElementById('margin-hdr');
-  if(mhdr){
-    mhdr.innerHTML = '<th>Indicador</th>' + yrLabel.map(y=>`<th>${y}</th>`).join('');
-    const mb = document.getElementById('margin-body');
-    const marginRows = [
-      {lbl:'Margen Bruto %',fn:i=>p(IS.gross[i],IS.revenue[i])},
-      {lbl:'Margen EBITDA %',fn:i=>p(IS.ebitda[i],IS.revenue[i])},
-      {lbl:'Margen EBIT %',fn:i=>p(IS.ebit[i],IS.revenue[i])},
-      {lbl:'Margen Neto %',fn:i=>p(IS.net[i],IS.revenue[i])},
-      {lbl:'COGS / Ingresos %',fn:i=>p(IS.cogs[i],IS.revenue[i])},
-      {lbl:'SGA / Ingresos %',fn:i=>p(IS.sga[i],IS.revenue[i])},
-      {lbl:'D&A / Ingresos %',fn:i=>p(IS.da[i],IS.revenue[i])},
-    ];
-    mb.innerHTML = marginRows.map(row=>{
-      const cells = YEARS.map((_,i)=>{ const v=row.fn(i); return `<td>${fmtP(v)}</td>`; }).join('');
-      return `<tr><td>${row.lbl}</td>${cells}</tr>`;
-    }).join('');
-  }
-}
-
-// ── Balance Table ─────────────────────────────────────────────────
-function buildBalance() {
-  const hdr = document.getElementById('bs-hdr');
-  if(!hdr) return;
-  hdr.innerHTML = '<th>Concepto  (CLP)</th>' + yrLabel.map(y=>`<th>${y}</th>`).join('');
-
-  const fmtB = v => {
-    if(v===null) return '<span class="nd">N/D</span>';
-    return (v<0?'<span class="neg">(':'') + '$' + Math.abs(v/1e6).toFixed(1)+'M' + (v<0?')':'');
-  };
-
-  const bsRows = [
-    {cls:'sec-row',lbl:'ACTIVOS'},
-    {cls:'sec-row',lbl:'  A. Activos Corrientes',sub:true},
-    {lbl:'    Efectivo y Equivalentes',key:'cash'},
-    {lbl:'    Deudores Comerciales',key:'ar'},
-    {lbl:'    Existencias (Inventarios)',key:'inventory'},
-    {lbl:'    Otros Activos Corrientes',key:'other_ca'},
-    {cls:'tot-row',lbl:'  TOTAL ACTIVOS CORRIENTES',key:'current_assets'},
-    {cls:'sec-row',lbl:'  B. Activos No Corrientes',sub:true},
-    {lbl:'    PP&E Neto',key:'ppe_net'},
-    {lbl:'    Otros Activos No Corrientes',key:'other_nca'},
-    {cls:'tot-row',lbl:'  TOTAL ACTIVOS NO CORRIENTES',computed:i=>
-      (BS.ppe_net[i]!=null?BS.ppe_net[i]:0)+(BS.other_nca[i]!=null?BS.other_nca[i]:0)},
-    {cls:'net-row',lbl:'TOTAL ACTIVOS',key:'total_assets'},
-    {cls:'sec-row',lbl:'PASIVOS Y PATRIMONIO'},
-    {cls:'sec-row',lbl:'  C. Pasivos Corrientes',sub:true},
-    {lbl:'    Cuentas por Pagar (Proveedores)',key:'ap'},
-    {lbl:'    Deuda Financiera Corto Plazo',key:'std'},
-    {lbl:'    Otros Pasivos Corrientes',key:'other_cl'},
-    {cls:'tot-row',lbl:'  TOTAL PASIVOS CORRIENTES',key:'current_liab'},
-    {cls:'sec-row',lbl:'  D. Pasivos No Corrientes',sub:true},
-    {lbl:'    Deuda Financiera Largo Plazo',key:'ltd'},
-    {cls:'tot-row',lbl:'  TOTAL PASIVOS',key:'total_liab'},
-    {cls:'sec-row',lbl:'  E. Patrimonio Neto',sub:true},
-    {cls:'hi-row',lbl:'  TOTAL PATRIMONIO NETO',key:'equity'},
-    {cls:'net-row',lbl:'TOTAL PASIVOS + PATRIMONIO',computed:i=>
-      BS.total_liab[i]!=null&&BS.equity[i]!=null?BS.total_liab[i]+BS.equity[i]:null},
-  ];
-
-  const tbody = document.getElementById('bs-body');
-  tbody.innerHTML = bsRows.map(row=>{
-    if(row.cls==='sec-row') return `<tr class="sec-row"><td colspan="${NY+1}" style="${row.sub?'padding-left:16px;font-size:10.5px':''}">${row.lbl}</td></tr>`;
-    const cells = YEARS.map((_,i)=>{
-      let v = row.computed ? row.computed(i) : BS[row.key][i];
-      return `<td>${fmtB(v)}</td>`;
-    }).join('');
-    return `<tr class="${row.cls||''}"><td>${row.lbl}</td>${cells}</tr>`;
-  }).join('');
-}
-
-// ── Cash Flow Table ───────────────────────────────────────────────
-function buildCashFlow() {
-  const hdr = document.getElementById('cf-hdr');
-  if(!hdr) return;
-  hdr.innerHTML = '<th>Concepto  (CLP)</th>' + yrLabel.map(y=>`<th>${y}</th>`).join('');
-
-  const fmtC = v => v==null?'<span class="nd">N/D</span>':(v<0?'<span class="neg">($'+Math.abs(v/1e6).toFixed(1)+'M)</span>':'$'+( v/1e6).toFixed(1)+'M');
-
-  // Compute cash flow items from balance changes
-  const delta = (arr,i) => (i===0||arr[i]==null||arr[i-1]==null)?null:arr[i]-arr[i-1];
-  const ndelta= (arr,i) => (i===0||arr[i]==null||arr[i-1]==null)?null:-(arr[i]-arr[i-1]);
-
-  const cfRows = [
-    {cls:'sec-row',lbl:'A. ACTIVIDADES OPERACIONALES'},
-    {lbl:'  Utilidad (Pérdida) del Ejercicio',fn:i=>IS.net[i]},
-    {lbl:'  + Depreciación y Amortización',fn:i=>IS.da[i]},
-    {cls:'sec-row',lbl:'  Variaciones en Capital de Trabajo:',sub:true},
-    {lbl:'  Disminución (Aumento) Deudores',fn:i=>ndelta(BS.ar,i)},
-    {lbl:'  Disminución (Aumento) Inventarios',fn:i=>ndelta(BS.inventory,i)},
-    {lbl:'  Disminución (Aumento) Otros CA',fn:i=>ndelta(BS.other_ca,i)},
-    {lbl:'  Aumento (Disminución) Proveedores',fn:i=>delta(BS.ap,i)},
-    {lbl:'  Aumento (Disminución) Otros CL',fn:i=>delta(BS.other_cl,i)},
-    {cls:'tot-row',lbl:'FLUJO NETO OPERACIONAL  (CFO)',fn:i=>{
-      const items=[IS.net[i],IS.da[i],ndelta(BS.ar,i),ndelta(BS.inventory,i),
-        ndelta(BS.other_ca,i),delta(BS.ap,i),delta(BS.other_cl,i)];
-      return i===0?IS.net[i]:items.every(v=>v!=null)?items.reduce((a,b)=>a+b,0):null;
-    }},
-    {cls:'sec-row',lbl:'B. ACTIVIDADES DE INVERSIÓN'},
-    {lbl:'  CAPEX (variación PP&E bruta estimada)',fn:i=>i===0?null:
-      (BS.ppe_net[i]!=null&&BS.ppe_net[i-1]!=null?-(BS.ppe_net[i]-BS.ppe_net[i-1]+IS.da[i]):null)},
-    {cls:'sec-row',lbl:'C. ACTIVIDADES DE FINANCIAMIENTO'},
-    {lbl:'  Variación Deuda Financiera CP',fn:i=>delta(BS.std,i)},
-    {lbl:'  Variación Deuda Financiera LP',fn:i=>delta(BS.ltd,i)},
-    {cls:'tot-row',lbl:'VARIACIÓN NETA DE EFECTIVO',fn:i=>ndelta(BS.cash,i)},
-  ];
-
-  const tbody = document.getElementById('cf-body');
-  tbody.innerHTML = cfRows.map(row=>{
-    if(row.cls==='sec-row') return `<tr class="sec-row"><td colspan="${NY+1}">${row.lbl}</td></tr>`;
-    const cells = YEARS.map((_,i)=>{ const v=row.fn(i); return `<td>${fmtC(v)}</td>`; }).join('');
-    return `<tr class="${row.cls||''}"><td>${row.lbl}</td>${cells}</tr>`;
-  }).join('');
-
-  // FCF table
-  const fhdr = document.getElementById('fcf-hdr');
-  if(fhdr){
-    fhdr.innerHTML = '<th>Concepto  (CLP)</th>' + yrLabel.map(y=>`<th>${y}</th>`).join('');
-    const fb = document.getElementById('fcf-body');
-    const fcfRows = [
-      {lbl:'EBITDA',fn:i=>IS.ebitda[i]},
-      {lbl:'(-) CAPEX Estimado (15% EBITDA)',fn:i=>IS.ebitda[i]!=null?-IS.ebitda[i]*0.15:null},
-      {lbl:'(-) Variación Capital de Trabajo',fn:i=>{
-        const d=[ndelta(BS.ar,i),ndelta(BS.inventory,i),ndelta(BS.other_ca,i),delta(BS.ap,i)];
-        return i===0?null:(d.every(v=>v!=null)?d.reduce((a,b)=>a+b,0):null);
-      }},
-      {cls:'tot-row',lbl:'FREE CASH FLOW TO FIRM  (FCFF)',fn:i=>{
-        if(i===0||IS.ebitda[i]==null)return null;
-        const capex=-IS.ebitda[i]*0.15;
-        const dwc=[ndelta(BS.ar,i),ndelta(BS.inventory,i),ndelta(BS.other_ca,i),delta(BS.ap,i)];
-        const wc=dwc.every(v=>v!=null)?dwc.reduce((a,b)=>a+b,0):0;
-        return IS.ebitda[i]+capex+wc;
-      }},
-      {lbl:'(+/-) Variación Deuda Neta',fn:i=>delta(BS.std,i)!=null?(delta(BS.std,i)||0)+(delta(BS.ltd,i)||0):null},
-      {cls:'hi-row',lbl:'FREE CASH FLOW TO EQUITY  (FCFE)',fn:i=>{
-        if(i===0||IS.ebitda[i]==null)return null;
-        const capex=-IS.ebitda[i]*0.15;
-        const dwc=[ndelta(BS.ar,i),ndelta(BS.inventory,i),ndelta(BS.other_ca,i),delta(BS.ap,i)];
-        const wc=dwc.every(v=>v!=null)?dwc.reduce((a,b)=>a+b,0):0;
-        const dd=(delta(BS.std,i)||0)+(delta(BS.ltd,i)||0);
-        return IS.ebitda[i]+capex+wc+dd;
-      }},
-    ];
-    fb.innerHTML = fcfRows.map(row=>{
-      const cells=YEARS.map((_,i)=>{ const v=row.fn(i); return `<td>${fmtC(v)}</td>`; }).join('');
-      return `<tr class="${row.cls||''}"><td>${row.lbl}</td>${cells}</tr>`;
-    }).join('');
-  }
-}
-
-// ── Ratios Tables ─────────────────────────────────────────────────
-function buildRatios() {
-  function makeRatioTable(hdrId, bodyId, rowDefs) {
-    const h = document.getElementById(hdrId);
-    if(!h) return;
-    h.innerHTML = '<th>Indicador  /  Fórmula</th>' + yrLabel.map(y=>`<th>${y}</th>`).join('');
-    const b = document.getElementById(bodyId);
-    b.innerHTML = rowDefs.map(row=>{
-      const cells = YEARS.map((_,i)=>{
-        const v = row.fn(i);
-        const f = row.fmt||'x';
-        let disp='N/D', cls='';
-        if(v!==null){
-          disp = f==='pct'?fmtP(v):f==='x'?fmtX(v):f==='days'?fmtD(v):fmtM(v,1);
-          if(row.good!=null){
-            cls=v>=row.good?'txt-green':v>=row.warn?'txt-amber':'txt-red';
-          } else if(row.bad!=null){
-            cls=v<=row.bad?'txt-green':v<=row.warn?'txt-amber':'txt-red';
-          }
-        }
-        return `<td class="${cls}">${v===null?'<span class="nd">N/D</span>':disp}</td>`;
-      }).join('');
-      return `<tr><td>${row.lbl}</td>${cells}</tr>`;
-    }).join('');
-  }
-
-  // PROFITABILITY
-  makeRatioTable('prof-hdr','prof-body',[
-    {lbl:'Margen Bruto  =  Gross Profit / Revenue',fn:i=>p(IS.gross[i],IS.revenue[i]),fmt:'pct',good:35,warn:25},
-    {lbl:'Margen EBITDA  =  EBITDA / Revenue',fn:i=>p(IS.ebitda[i],IS.revenue[i]),fmt:'pct',good:12,warn:7},
-    {lbl:'Margen EBIT  =  EBIT / Revenue',fn:i=>p(IS.ebit[i],IS.revenue[i]),fmt:'pct',good:8,warn:4},
-    {lbl:'Margen Neto  =  Net Income / Revenue',fn:i=>p(IS.net[i],IS.revenue[i]),fmt:'pct',good:8,warn:4},
-    {lbl:'ROA  =  Net Income / Avg Total Assets',fn:i=>{const ta=avg2(BS.total_assets,i);return(ta&&IS.net[i]!=null)?IS.net[i]/ta*100:null;},fmt:'pct',good:8,warn:4},
-    {lbl:'ROE  =  Net Income / Avg Equity',fn:i=>{const eq=avg2(BS.equity,i);return(eq&&eq>0&&IS.net[i]!=null)?IS.net[i]/eq*100:null;},fmt:'pct',good:12,warn:8},
-    {lbl:'ROCE  =  EBIT / (Assets – Current Liab)',fn:i=>{const ce=BS.total_assets[i]!=null&&BS.current_liab[i]!=null?BS.total_assets[i]-BS.current_liab[i]:null;return(ce&&ce>0&&IS.ebit[i]!=null)?IS.ebit[i]/ce*100:null;},fmt:'pct',good:10,warn:5},
-    {lbl:'Asset Turnover  =  Revenue / Avg Assets',fn:i=>{const ta=avg2(BS.total_assets,i);return(ta&&IS.revenue[i])?IS.revenue[i]/ta:null;},fmt:'x',good:1.5,warn:0.8},
-  ]);
-
-  // LIQUIDITY
-  makeRatioTable('liq-hdr','liq-body',[
-    {lbl:'Razón Corriente  =  CA / CL',fn:i=>rt(BS.current_assets[i],BS.current_liab[i]),fmt:'x',good:1.5,warn:1.0},
-    {lbl:'Prueba Ácida  =  (Cash + AR) / CL',fn:i=>{const n=BS.cash[i]!=null&&BS.ar[i]!=null?BS.cash[i]+BS.ar[i]:null;return rt(n,BS.current_liab[i]);},fmt:'x',good:1.0,warn:0.7},
-    {lbl:'Razón de Efectivo  =  Cash / CL',fn:i=>rt(BS.cash[i],BS.current_liab[i]),fmt:'x',good:0.5,warn:0.2},
-    {lbl:'Capital de Trabajo Neto (CLP M)',fn:i=>BS.current_assets[i]!=null&&BS.current_liab[i]!=null?(BS.current_assets[i]-BS.current_liab[i])/1e6:null,fmt:'clp',good:0,warn:-10},
-    {lbl:'CTN / Ingresos %',fn:i=>{const nwc=BS.current_assets[i]!=null&&BS.current_liab[i]!=null?BS.current_assets[i]-BS.current_liab[i]:null;return p(nwc,IS.revenue[i]);},fmt:'pct',good:10,warn:0},
-  ]);
-
-  // ACTIVITY
-  makeRatioTable('act-hdr','act-body',[
-    {lbl:'DSO — Días de Cobro  (AR/Rev×365)',fn:i=>BS.ar[i]&&IS.revenue[i]?BS.ar[i]/IS.revenue[i]*365:null,fmt:'days',bad:30,warn:60},
-    {lbl:'DIO — Días Inventario  (Inv/COGS×365)',fn:i=>BS.inventory[i]&&IS.cogs[i]?BS.inventory[i]/IS.cogs[i]*365:null,fmt:'days',bad:45,warn:75},
-    {lbl:'DPO — Días de Pago  (AP/COGS×365)',fn:i=>BS.ap[i]&&IS.cogs[i]?BS.ap[i]/IS.cogs[i]*365:null,fmt:'days',good:45,warn:20},
-    {lbl:'CCC — Ciclo Conversión Efectivo (días)',fn:i=>{
-      const dso=BS.ar[i]&&IS.revenue[i]?BS.ar[i]/IS.revenue[i]*365:null;
-      const dio=BS.inventory[i]&&IS.cogs[i]?BS.inventory[i]/IS.cogs[i]*365:null;
-      const dpo=BS.ap[i]&&IS.cogs[i]?BS.ap[i]/IS.cogs[i]*365:null;
-      return dso!=null&&dio!=null&&dpo!=null?dso+dio-dpo:null;},fmt:'days',bad:30,warn:60},
-    {lbl:'Rotación Inventarios  (COGS/Avg Inv)',fn:i=>{const ai=avg2(BS.inventory,i);return(ai&&IS.cogs[i])?IS.cogs[i]/ai:null;},fmt:'x',good:6,warn:4},
-    {lbl:'Rotación Deudores  (Rev/Avg AR)',fn:i=>{const aar=avg2(BS.ar,i);return(aar&&aar>0&&IS.revenue[i])?IS.revenue[i]/aar:null;},fmt:'x',good:8,warn:5},
-  ]);
-
-  // LEVERAGE
-  makeRatioTable('lev-hdr','lev-body',[
-    {lbl:'Deuda / Patrimonio  (Total Liab/Equity)',fn:i=>rt(BS.total_liab[i],BS.equity[i]),fmt:'x',bad:1.5,warn:3},
-    {lbl:'Deuda / Activos  (Total Liab/Total Assets)',fn:i=>rt(BS.total_liab[i],BS.total_assets[i]),fmt:'x',bad:0.6,warn:0.8},
-    {lbl:'Ratio Autonomía  (Equity/Total Assets)',fn:i=>p(BS.equity[i],BS.total_assets[i]),fmt:'pct',good:40,warn:25},
-    {lbl:'Multiplicador de Capital  (Assets/Equity)',fn:i=>rt(BS.total_assets[i],BS.equity[i]),fmt:'x',bad:2.5,warn:4},
-    {lbl:'Deuda Financiera Total (CLP M)',fn:i=>BS.std[i]!=null&&BS.ltd[i]!=null?(BS.std[i]+BS.ltd[i])/1e6:null,fmt:'clp'},
-    {lbl:'Deuda Financiera Neta (CLP M)',fn:i=>BS.std[i]!=null&&BS.cash[i]!=null?(BS.std[i]+(BS.ltd[i]||0)-BS.cash[i])/1e6:null,fmt:'clp'},
-    {lbl:'Deuda Neta / EBITDA',fn:i=>{const nd=BS.std[i]!=null&&BS.cash[i]!=null?BS.std[i]+(BS.ltd[i]||0)-BS.cash[i]:null;return(nd!=null&&IS.ebitda[i]&&IS.ebitda[i]>0)?nd/IS.ebitda[i]:null;},fmt:'x',bad:2,warn:4},
-    {lbl:'Total Pasivos / EBITDA',fn:i=>(BS.total_liab[i]!=null&&IS.ebitda[i]&&IS.ebitda[i]>0)?BS.total_liab[i]/IS.ebitda[i]:null,fmt:'x',bad:3,warn:5},
-  ]);
-
-  // DUPONT
-  makeRatioTable('dup-hdr','dup-body',[
-    {lbl:'F1: Margen Neto  (Net/Rev)',fn:i=>p(IS.net[i],IS.revenue[i]),fmt:'pct'},
-    {lbl:'F2: Rotación Activos  (Rev/AvgAssets)',fn:i=>{const ta=avg2(BS.total_assets,i);return ta&&IS.revenue[i]?IS.revenue[i]/ta:null;},fmt:'x'},
-    {lbl:'F3: Multiplicador Capital  (AvgAssets/AvgEq)',fn:i=>{const ta=avg2(BS.total_assets,i);const eq=avg2(BS.equity,i);return ta&&eq&&eq>0?ta/eq:null;},fmt:'x'},
-    {lbl:'ROE DuPont 3F  =  F1×F2×F3',fn:i=>{
-      const nm=IS.net[i]!=null&&IS.revenue[i]?IS.net[i]/IS.revenue[i]:null;
-      const at=avg2(BS.total_assets,i);const ae=avg2(BS.equity,i);
-      const at_r=at&&IS.revenue[i]?IS.revenue[i]/at:null;
-      const em=at&&ae&&ae>0?at/ae:null;
-      return nm!=null&&at_r!=null&&em!=null?nm*at_r*em*100:null;},fmt:'pct'},
-    {lbl:'G1: Carga Fiscal  (Net/EBT)',fn:i=>rt(IS.net[i],IS.ebt[i]),fmt:'x'},
-    {lbl:'G2: Carga Interés  (EBT/EBIT)',fn:i=>rt(IS.ebt[i],IS.ebit[i]),fmt:'x'},
-    {lbl:'G3: Margen EBIT  (EBIT/Rev)',fn:i=>p(IS.ebit[i],IS.revenue[i]),fmt:'pct'},
-    {lbl:'ROE DuPont 5F  =  G1×G2×G3×F2×F3',fn:i=>{
-      const g1=rt(IS.net[i],IS.ebt[i]);
-      const g2=rt(IS.ebt[i],IS.ebit[i]);
-      const g3=IS.ebit[i]&&IS.revenue[i]?IS.ebit[i]/IS.revenue[i]:null;
-      const f2=(() => {const ta=avg2(BS.total_assets,i);return ta&&IS.revenue[i]?IS.revenue[i]/ta:null;})();
-      const f3=(() => {const ta=avg2(BS.total_assets,i);const eq=avg2(BS.equity,i);return ta&&eq&&eq>0?ta/eq:null;})();
-      return [g1,g2,g3,f2,f3].every(v=>v!=null)?g1*g2*g3*f2*f3*100:null;},fmt:'pct'},
-  ]);
-}
-
-// ── Projections Table ─────────────────────────────────────────────
-function buildProjections() {
-  const projYears = [2025,2026,2027,2028,2029,2030];
-  const baseRev   = [1334.4,1534.6,1764.8,2029.5,2333.9,2683.9];
-  const baseCogs  = [815.7,890.1,973.9,1095.9,1213.6,1342.0];
-  const baseGross = baseRev.map((r,i)=>r-baseCogs[i]);
-  const baseSGA   = baseRev.map(r=>r*0.265);
-  const baseDA    = [15.0,17.2,19.8,22.8,26.2,30.1];
-  const baseEBIT  = baseRev.map((r,i)=>baseGross[i]-baseSGA[i]-baseDA[i]);
-  const baseEBITDA= baseEBIT.map((e,i)=>e+baseDA[i]);
-  const baseNet   = baseEBIT.map(e=>e*0.95); // approx after non-op
-  const baseFCF   = baseEBITDA.map((e,i)=>e*0.80 - (i===0?0:baseDA[i]*2));
-
-  const hdr = document.getElementById('proj-hdr');
-  if(!hdr) return;
-  hdr.innerHTML = '<th>Concepto (CLP M)</th>' + projYears.map(y=>`<th>${y}${y===2025?' (Real)':' (Proy.)'}</th>`).join('');
-
-  const pb = document.getElementById('proj-body');
-  const rows=[
-    {lbl:'Ingresos',data:baseRev,cls:'tot-row'},
-    {lbl:'  Crecimiento YoY',data:projYears.map((_,i)=>i===0?null:(baseRev[i]-baseRev[i-1])/baseRev[i-1]*100),fmt:'pct'},
-    {lbl:'Costo de Ventas',data:baseCogs,cls:''},
-    {lbl:'Margen Bruto',data:baseGross,cls:'hi-row'},
-    {lbl:'  % Margen Bruto',data:baseRev.map((_,i)=>baseGross[i]/baseRev[i]*100),fmt:'pct'},
-    {lbl:'SGA + D&A',data:baseSGA.map((s,i)=>s+baseDA[i]),cls:''},
-    {lbl:'EBIT',data:baseEBIT,cls:'tot-row'},
-    {lbl:'  % Margen EBIT',data:baseRev.map((_,i)=>baseEBIT[i]/baseRev[i]*100),fmt:'pct'},
-    {lbl:'EBITDA',data:baseEBITDA,cls:''},
-    {lbl:'  % Margen EBITDA',data:baseRev.map((_,i)=>baseEBITDA[i]/baseRev[i]*100),fmt:'pct'},
-    {lbl:'Utilidad Neta (Est.)',data:baseNet,cls:'net-row'},
-    {lbl:'  % Margen Neto',data:baseRev.map((_,i)=>baseNet[i]/baseRev[i]*100),fmt:'pct'},
-    {lbl:'FCF Estimado',data:baseFCF,cls:'hi-row'},
-  ];
-  pb.innerHTML = rows.map(row=>{
-    const cells = row.data.map((v,i)=>{
-      if(v===null) return '<td>-</td>';
-      const s = row.fmt==='pct'?fmtP(v):(v<0?'('+Math.abs(v).toFixed(1)+')':v.toFixed(1));
-      return `<td>${s}</td>`;
-    }).join('');
-    return `<tr class="${row.cls||''}"><td>${row.lbl}</td>${cells}</tr>`;
-  }).join('');
-
-  // Store for charts
-  window._proj = {projYears,baseRev,baseEBITDA,baseEBIT,baseNet,baseFCF,
-    bearRev:baseRev.map((v,i)=>i===0?v:1334.4*Math.pow(1.05,i)),
-    bullRev:baseRev.map((v,i)=>i===0?v:1334.4*Math.pow(1.25,i))};
-}
-
-// ── Valuation ─────────────────────────────────────────────────────
-function buildValuation() {
-  const ebitda25 = 164.1; // CLP M 2025
-  const net25    = 160.2;
-  const rev25    = 1334.4;
-  const cash24   = 85.4;
-  const debt24   = 20.0;
-  const netDebt  = debt24 - cash24; // negative = net cash
-
-  // DCF
-  const wacc=0.14, tg=0.03;
-  const fcfs=[139,158,182,209,240]; // 5-year FCF projection base case
-  let pvFcf=0;
-  fcfs.forEach((f,i)=>{pvFcf+=f/Math.pow(1+wacc,i+1);});
-  const tv=fcfs[4]*(1+tg)/(wacc-tg);
-  const pvTv=tv/Math.pow(1+wacc,5);
-  const evDCF=pvFcf+pvTv;
-  const eqDCF=evDCF-netDebt;
-
-  // EBITDA multiple
-  const evEV_lo=ebitda25*5, evEV_base=ebitda25*6.5, evEV_hi=ebitda25*9;
-  const eqEV_lo=evEV_lo-netDebt, eqEV_base=evEV_base-netDebt, eqEV_hi=evEV_hi-netDebt;
-
-  // P/E
-  const evPE_lo=net25*7, evPE_base=net25*10, evPE_hi=net25*14;
-
-  // EV/Revenue
-  const evRev_lo=rev25*0.4, evRev_base=rev25*0.7, evRev_hi=rev25*1.2;
-
-  document.getElementById('dcf-range').textContent = `EV: $${evDCF.toFixed(0)}M CLP → Equity: $${eqDCF.toFixed(0)}M CLP (~USD ${(eqDCF/900).toFixed(0)}K)`;
-  document.getElementById('dcf-detail').innerHTML=`WACC: 14% · Terminal growth: 3% · PV FCFs: $${pvFcf.toFixed(0)}M · PV TV: $${pvTv.toFixed(0)}M · TV múltiplo implícito: ${(tv/ebitda25/1).toFixed(1)}x EBITDA · Deuda neta: $${netDebt.toFixed(1)}M (posición de caja neta)`;
-  document.getElementById('evebitda-range').textContent = `Rango EV: $${evEV_lo.toFixed(0)}M – $${evEV_base.toFixed(0)}M – $${evEV_hi.toFixed(0)}M CLP`;
-  document.getElementById('evebitda-detail').innerHTML=`EBITDA 2025: $${ebitda25}M · Múltiplos: 5x / 6.5x / 9x · Sector: distribución café/alimentos PYME Chile`;
-  document.getElementById('pe-range').textContent = `Rango Equity: $${evPE_lo.toFixed(0)}M – $${evPE_base.toFixed(0)}M – $${evPE_hi.toFixed(0)}M CLP`;
-  document.getElementById('pe-detail').innerHTML=`Net Income 2025: $${net25}M · P/E: 7x / 10x / 14x · Ajustado por prima iliquidez (-20%)`;
-  document.getElementById('evrev-range').textContent = `Rango EV: $${evRev_lo.toFixed(0)}M – $${evRev_base.toFixed(0)}M – $${evRev_hi.toFixed(0)}M CLP`;
-  document.getElementById('evrev-detail').innerHTML=`Revenue 2025: $${rev25}M · EV/Rev: 0.4x / 0.7x / 1.2x · Bajo para importadoras con márgenes delgados`;
-
-  const valRows = [
-    ['DCF (5 años WACC 14%)',evDCF*0.8,evDCF,evDCF*1.2,eqDCF*0.8,eqDCF,eqDCF*1.2,evDCF/rev25],
-    ['EV/EBITDA (5x–6.5x–9x)',evEV_lo,evEV_base,evEV_hi,eqEV_lo,eqEV_base,eqEV_hi,evEV_base/rev25],
-    ['P/E (7x–10x–14x)',evPE_lo,evPE_lo,evPE_hi,evPE_lo,evPE_base,evPE_hi,evPE_base/rev25],
-    ['EV/Revenue (0.4x–0.7x–1.2x)',evRev_lo,evRev_base,evRev_hi,evRev_lo-netDebt,evRev_base-netDebt,evRev_hi-netDebt,evRev_base/rev25],
-  ];
-  const vb = document.getElementById('val-body');
-  vb.innerHTML = valRows.map(([nm,...vs])=>{
-    const cells=vs.map((v,i)=>`<td>${i<3?v.toFixed(0):i===6?v.toFixed(2)+'x':v.toFixed(0)}</td>`).join('');
-    return `<tr><td>${nm}</td>${cells}</tr>`;
-  }).join('');
-
-  // Sensitivity table
-  const waccs=[0.12,0.14,0.16,0.18];
-  const tgs=[0.01,0.02,0.03,0.04,0.05];
-  let sensHtml='<table style="width:100%;border-collapse:collapse">';
-  sensHtml+='<thead><tr><th style="background:var(--navy);color:#fff;padding:5px">WACC \\ g</th>'+
-    tgs.map(t=>`<th style="background:var(--navy);color:#fff;padding:5px">${(t*100).toFixed(0)}%</th>`).join('')+'</tr></thead><tbody>';
-  waccs.forEach(w=>{
-    sensHtml+=`<tr><td style="background:var(--cream);padding:5px;font-weight:700">${(w*100).toFixed(0)}%</td>`;
-    tgs.forEach(g=>{
-      const pvF2=fcfs.reduce((s,f,i)=>s+f/Math.pow(1+w,i+1),0);
-      const tv2=fcfs[4]*(1+g)/(w-g);
-      const pv2=tv2/Math.pow(1+w,5);
-      const ev2=pvF2+pv2-netDebt;
-      const bg=ev2>2000?'#D5F5E3':ev2>1500?'#FEF9E7':ev2>1000?'#FAD7D7':'#FADBD8';
-      sensHtml+=`<td style="background:${bg};padding:5px;text-align:right">$${ev2.toFixed(0)}M</td>`;
-    });
-    sensHtml+='</tr>';
-  });
-  sensHtml+='</tbody></table><p style="font-size:10px;margin-top:6px;color:#888">Equity Value en CLP M. Verde >$2,000M · Ámbar $1,000-2,000M · Rojo <$1,000M</p>';
-  document.getElementById('sensitivity-table').innerHTML=sensHtml;
-
-  window._val = {
-    evDCF,eqDCF,evEV_base,eqEV_base,evPE_base,evRev_base,
-    labels:['DCF','EV/EBITDA','P/E','EV/Revenue'],
-    lo:[evDCF*0.8,evEV_lo,evPE_lo,evRev_lo],
-    base:[evDCF,evEV_base,evPE_base,evRev_base],
-    hi:[evDCF*1.2,evEV_hi,evPE_hi,evRev_hi],
-  };
-}
-
-// ── CHARTS ────────────────────────────────────────────────────────
-const chartDefaults = {
-  responsive:true, maintainAspectRatio:true,
-  plugins:{legend:{labels:{font:{size:11},padding:10}}},
-  scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-          y:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}}},
-};
-
-function initCharts() {
-  // Filter null years for display (keep labels)
-  const revM   = IS.revenue.map(v=>v==null?null:v/1e6);
-  const ebitdaM= IS.ebitda.map(v=>v==null?null:v/1e6);
-  const netM   = IS.net.map(v=>v==null?null:v/1e6);
-  const gmPct  = IS.revenue.map((r,i)=>p(IS.gross[i],r));
-  const emPct  = IS.revenue.map((r,i)=>p(IS.ebitda[i],r));
-  const ebitPct= IS.revenue.map((r,i)=>p(IS.ebit[i],r));
-  const nmPct  = IS.revenue.map((r,i)=>p(IS.net[i],r));
-  const cogsM  = IS.cogs.map(v=>v==null?null:v/1e6);
-  const caM    = BS.current_assets.map(v=>v==null?null:v/1e6);
-  const ncaM   = BS.total_assets.map((v,i)=>v==null||BS.current_assets[i]==null?null:(v-BS.current_assets[i])/1e6);
-  const clM    = BS.current_liab.map(v=>v==null?null:v/1e6);
-  const ltdM   = BS.ltd.map(v=>v==null?null:v/1e6);
-  const eqM    = BS.equity.map(v=>v==null?null:v/1e6);
-  const cashM  = BS.cash.map(v=>v==null?null:v/1e6);
-
-  // ── Chart 1: MAIN ──
-  if(document.getElementById('c-main')) new Chart(document.getElementById('c-main'),{
-    data:{labels:yrLabel,datasets:[
-      {type:'bar',label:'Ingresos (M)',data:revM,backgroundColor:revM.map((v,i)=>i===NY-1?'rgba(192,128,64,0.8)':'rgba(27,42,71,0.7)'),borderRadius:4,order:2},
-      {type:'line',label:'EBITDA (M)',data:ebitdaM,borderColor:PALETTE.amber,backgroundColor:'transparent',borderWidth:2.5,pointRadius:4,tension:.3,order:1},
-      {type:'line',label:'Utilidad Neta (M)',data:netM,borderColor:PALETTE.green,backgroundColor:PALETTE.greenLt+'44',fill:true,borderWidth:2.5,pointRadius:4,tension:.3,order:0,yAxisID:'y1'},
-    ]},options:{...chartDefaults,interaction:{mode:'index'},
-      scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-        y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}},
-        y1:{position:'right',title:{display:true,text:'Utilidad (M)'},grid:{drawOnChartArea:false}}}},
-  });
-
-  // ── Chart 2: MARGINS ──
-  if(document.getElementById('c-margins')) new Chart(document.getElementById('c-margins'),{
-    type:'line',data:{labels:yrLabel,datasets:[
-      {label:'Margen Bruto %',data:gmPct,borderColor:PALETTE.green,backgroundColor:PALETTE.greenLt+'44',fill:true,borderWidth:2,pointRadius:3,tension:.3},
-      {label:'Margen EBITDA %',data:emPct,borderColor:PALETTE.amber,borderWidth:2,pointRadius:3,tension:.3,borderDash:[6,3]},
-      {label:'Margen EBIT %',data:ebitPct,borderColor:PALETTE.blue,borderWidth:2,pointRadius:3,tension:.3,borderDash:[3,3]},
-      {label:'Margen Neto %',data:nmPct,borderColor:PALETTE.red,borderWidth:2,pointRadius:3,tension:.3,borderDash:[2,2]},
-    ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-      y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0ebe3'}}}},
-  });
-
-  // ── Chart 3: COST DONUT 2025 ──
-  if(document.getElementById('c-costs2025')){
-    const r=IS.revenue[NY-1],c=IS.cogs[NY-1],s=IS.sga[NY-1],d=IS.da[NY-1],n=IS.net[NY-1];
-    new Chart(document.getElementById('c-costs2025'),{type:'doughnut',
-      data:{labels:['COGS','SGA','D&A','Utilidad Neta'],
-        datasets:[{data:[c,s,d,n].map(v=>v/1e6),
-          backgroundColor:[PALETTE.red+'CC',PALETTE.slate+'CC','#6C3483CC',PALETTE.green+'CC'],
-          borderWidth:2,borderColor:'#fff'}]},
-      options:{responsive:true,maintainAspectRatio:true,cutout:'50%',
-        plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:6}},
-          tooltip:{callbacks:{label:ctx=>`${ctx.label}: $${ctx.parsed.toFixed(1)}M (${(ctx.parsed/r*1e6*100).toFixed(1)}%)`}}}}});
-  }
-
-  // ── Chart 4: REV vs COGS ──
-  if(document.getElementById('c-rev-cogs')) new Chart(document.getElementById('c-rev-cogs'),{type:'bar',
-    data:{labels:yrLabel,datasets:[
-      {label:'Ingresos',data:revM,backgroundColor:'rgba(27,42,71,0.8)',borderRadius:4},
-      {label:'COGS',data:cogsM,backgroundColor:'rgba(139,26,26,0.7)',borderRadius:4},
-    ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-      y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-  });
-
-  // ── Chart 5: YoY GROWTH ──
-  if(document.getElementById('c-yoy')){
-    const growth=revM.map((v,i)=>i===0||v==null||revM[i-1]==null?null:(v-revM[i-1])/Math.abs(revM[i-1])*100);
-    new Chart(document.getElementById('c-yoy'),{type:'bar',
-      data:{labels:yrLabel,datasets:[{label:'YoY % Ingresos',data:growth,
-        backgroundColor:growth.map(v=>v==null?'#ccc':v>=0?PALETTE.green+'99':PALETTE.red+'99'),
-        borderColor:growth.map(v=>v==null?'#aaa':v>=0?PALETTE.green:PALETTE.red),
-        borderWidth:1,borderRadius:4}]},
-      options:{...chartDefaults,plugins:{legend:{display:false}},
-        scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-          y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 6: ASSETS COMPOSITION ──
-  if(document.getElementById('c-assets')) new Chart(document.getElementById('c-assets'),{type:'bar',
-    data:{labels:yrLabel,datasets:[
-      {label:'Activos Corrientes',data:caM,backgroundColor:PALETTE.blue+'99',borderRadius:[4,4,0,0]},
-      {label:'Activos No Corrientes',data:ncaM,backgroundColor:PALETTE.navy+'99',borderRadius:[0,0,4,4]},
-    ]},options:{...chartDefaults,scales:{x:{stacked:true,grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-      y:{stacked:true,title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-  });
-
-  // ── Chart 7: LIAB + EQUITY ──
-  if(document.getElementById('c-liab')) new Chart(document.getElementById('c-liab'),{type:'bar',
-    data:{labels:yrLabel,datasets:[
-      {label:'Pasivos Corrientes',data:clM,backgroundColor:PALETTE.red+'AA',borderRadius:[4,4,0,0]},
-      {label:'Deuda LP',data:ltdM,backgroundColor:'#8B1A1A77',borderRadius:[0,0,0,0]},
-      {label:'Patrimonio',data:eqM,backgroundColor:PALETTE.green+'88',borderRadius:[0,0,4,4]},
-    ]},options:{...chartDefaults,scales:{x:{stacked:true,grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-      y:{stacked:true,title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-  });
-
-  // ── Chart 8: PATRIMONIAL (last 5 years) ──
-  const patYrs=[5,6,8,9,10]; // 2018,2019,2021=skip,2022,2023,2024
-  const idxs=[4,5,7,8,9,10]; // indices for 2018,2019,2021,2022,2023,2024 (skip null)
-  const filtIdx=idxs.filter(i=>BS.total_assets[i]!=null);
-  if(document.getElementById('c-patrimonial')) new Chart(document.getElementById('c-patrimonial'),{type:'bar',
-    data:{labels:filtIdx.map(i=>YEARS[i]),datasets:[
-      {label:'Activos Corrientes',data:filtIdx.map(i=>caM[i]),backgroundColor:PALETTE.blue+'88'},
-      {label:'Activos No Corrientes',data:filtIdx.map(i=>ncaM[i]),backgroundColor:PALETTE.navy+'88'},
-      {label:'Total Pasivos',data:filtIdx.map(i=>clM[i]?clM[i]*-1:null),backgroundColor:PALETTE.red+'88'},
-      {label:'Patrimonio',data:filtIdx.map(i=>eqM[i]),backgroundColor:PALETTE.green+'88'},
-    ]},options:{...chartDefaults,
-      scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-  });
-
-  // ── Chart 9: EQUITY ──
-  if(document.getElementById('c-equity')) new Chart(document.getElementById('c-equity'),{type:'line',
-    data:{labels:yrLabel,datasets:[{label:'Patrimonio Neto (M)',data:eqM,borderColor:PALETTE.green,
-      backgroundColor:eqM.map(v=>v!=null&&v<0?PALETTE.red+'33':PALETTE.greenLt+'44'),
-      fill:true,borderWidth:2.5,pointRadius:4,tension:.3,
-      pointBackgroundColor:eqM.map(v=>v!=null&&v<0?PALETTE.red:PALETTE.green)}]},
-    options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-      y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-  });
-
-  // ── Chart 10: CASH ──
-  if(document.getElementById('c-cash')) new Chart(document.getElementById('c-cash'),{type:'bar',
-    data:{labels:yrLabel,datasets:[{label:'Efectivo (M)',data:cashM,
-      backgroundColor:cashM.map(v=>v!=null&&v>50?PALETTE.green+'AA':v!=null&&v>20?PALETTE.amber+'AA':PALETTE.red+'AA'),
-      borderRadius:4}]},
-    options:{...chartDefaults,plugins:{legend:{display:false}},
-      scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-  });
-
-  // ── Chart 11: EBITDA vs CAPEX ──
-  if(document.getElementById('c-ebitda-capex')){
-    const capex=BS.ppe_net.map((v,i)=>i===0||v==null||BS.ppe_net[i-1]==null?null:
-      -(v-BS.ppe_net[i-1]+(IS.da[i]||0)));
-    new Chart(document.getElementById('c-ebitda-capex'),{type:'bar',
-      data:{labels:yrLabel,datasets:[
-        {label:'EBITDA',data:ebitdaM,backgroundColor:PALETTE.amber+'99',borderRadius:4},
-        {label:'CAPEX Estimado',data:capex.map(v=>v==null?null:v/1e6),backgroundColor:PALETTE.navy+'88',borderRadius:4},
-      ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-        y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 12: ROE/ROA ──
-  if(document.getElementById('c-roe-roa')){
-    const roe=YEARS.map((_,i)=>{const eq=avg2(BS.equity,i);return(eq&&eq>0&&IS.net[i]!=null)?IS.net[i]/eq*100:null;});
-    const roa=YEARS.map((_,i)=>{const ta=avg2(BS.total_assets,i);return(ta&&IS.net[i]!=null)?IS.net[i]/ta*100:null;});
-    new Chart(document.getElementById('c-roe-roa'),{type:'line',
-      data:{labels:yrLabel,datasets:[
-        {label:'ROE %',data:roe,borderColor:PALETTE.green,borderWidth:2.5,pointRadius:4,tension:.3},
-        {label:'ROA %',data:roa,borderColor:PALETTE.blue,borderWidth:2,pointRadius:4,tension:.3,borderDash:[5,3]},
-      ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-        y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 13: Debt/EBITDA ──
-  if(document.getElementById('c-debt-ebitda')){
-    const de=YEARS.map((_,i)=>{
-      const nd=BS.std[i]!=null?BS.std[i]+(BS.ltd[i]||0)-BS.cash[i]:null;
-      return(nd!=null&&IS.ebitda[i]&&IS.ebitda[i]>0)?nd/IS.ebitda[i]:null;});
-    new Chart(document.getElementById('c-debt-ebitda'),{type:'bar',
-      data:{labels:yrLabel,datasets:[{label:'Deuda Neta/EBITDA',data:de,
-        backgroundColor:de.map(v=>v==null?'#ccc':v<0?PALETTE.green+'AA':v<2?PALETTE.amber+'AA':PALETTE.red+'AA'),
-        borderRadius:4}]},
-      options:{...chartDefaults,plugins:{legend:{display:false}},
-        scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-          y:{ticks:{callback:v=>v+'x'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 14: CCC ──
-  if(document.getElementById('c-ccc2')){
-    const dso=YEARS.map((_,i)=>BS.ar[i]&&IS.revenue[i]?BS.ar[i]/IS.revenue[i]*365:null);
-    const dio=YEARS.map((_,i)=>BS.inventory[i]&&IS.cogs[i]?BS.inventory[i]/IS.cogs[i]*365:null);
-    const dpo=YEARS.map((_,i)=>BS.ap[i]&&IS.cogs[i]?BS.ap[i]/IS.cogs[i]*365:null);
-    const ccc=YEARS.map((_,i)=>dso[i]!=null&&dio[i]!=null&&dpo[i]!=null?dso[i]+dio[i]-dpo[i]:null);
-    new Chart(document.getElementById('c-ccc2'),{type:'line',
-      data:{labels:yrLabel,datasets:[
-        {label:'DSO (días)',data:dso,borderColor:PALETTE.blue,borderWidth:2,pointRadius:3,tension:.3},
-        {label:'DIO (días)',data:dio,borderColor:PALETTE.amber,borderWidth:2,pointRadius:3,tension:.3,borderDash:[5,3]},
-        {label:'DPO (días)',data:dpo,borderColor:PALETTE.green,borderWidth:2,pointRadius:3,tension:.3,borderDash:[3,3]},
-        {label:'CCC (días)',data:ccc,borderColor:PALETTE.red,borderWidth:2.5,pointRadius:4,tension:.3},
-      ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-        y:{ticks:{callback:v=>v+'d'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 15: NWC ──
-  if(document.getElementById('c-nwc')){
-    const nwc=YEARS.map((_,i)=>BS.current_assets[i]!=null&&BS.current_liab[i]!=null?
-      (BS.current_assets[i]-BS.current_liab[i])/1e6:null);
-    new Chart(document.getElementById('c-nwc'),{type:'bar',
-      data:{labels:yrLabel,datasets:[{label:'Capital de Trabajo Neto (M)',data:nwc,
-        backgroundColor:nwc.map(v=>v==null?'#ccc':v>=0?PALETTE.green+'88':PALETTE.red+'88'),
-        borderRadius:4}]},
-      options:{...chartDefaults,plugins:{legend:{display:false}},
-        scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-          y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 16: COST PIE ──
-  if(document.getElementById('c-cost-pie')){
-    const r=IS.revenue[NY-1],c=IS.cogs[NY-1],s=IS.sga[NY-1],d=IS.da[NY-1];
-    const nop_abs=Math.abs(IS.non_op[NY-1]||0), n=IS.net[NY-1];
-    new Chart(document.getElementById('c-cost-pie'),{type:'pie',
-      data:{labels:['COGS','SGA','D&A','No Operacional','Utilidad Neta'],
-        datasets:[{data:[c,s,d,nop_abs,n].map(v=>v/1e6),
-          backgroundColor:[PALETTE.red,PALETTE.slate,PALETTE.purple,PALETTE.amber,PALETTE.green],
-          borderWidth:2,borderColor:'#fff'}]},
-      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:6}},
-        tooltip:{callbacks:{label:ctx=>`${ctx.label}: $${ctx.parsed.toFixed(0)}M (${(ctx.parsed/r*1e6*100).toFixed(1)}%)`}}}},
-    });
-  }
-
-  // ── Chart 17: COMMON SIZE ──
-  if(document.getElementById('c-common-size')){
-    const selIdx=[0,2,4,8,9,10,11]; // 2014,2016,2018,2022,2023,2024,2025
-    const cats=['Margen Bruto','EBITDA','EBIT','Utilidad Neta'];
-    const fns=[i=>p(IS.gross[i],IS.revenue[i]),i=>p(IS.ebitda[i],IS.revenue[i]),
-               i=>p(IS.ebit[i],IS.revenue[i]),i=>p(IS.net[i],IS.revenue[i])];
-    const colors=[PALETTE.green,PALETTE.amber,PALETTE.blue,PALETTE.red];
-    new Chart(document.getElementById('c-common-size'),{type:'line',
-      data:{labels:selIdx.map(i=>YEARS[i]),datasets:cats.map((c,ci)=>({
-        label:c,data:selIdx.map(i=>fns[ci](i)),borderColor:colors[ci],
-        borderWidth:2,pointRadius:4,tension:.3,
-        borderDash:ci>1?[5,3]:undefined}))},
-      options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-        y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 18: EBITDA BRIDGE ──
-  if(document.getElementById('c-bridge')){
-    const rev=IS.revenue[NY-1]/1e6, c=IS.cogs[NY-1]/1e6, s=IS.sga[NY-1]/1e6,
-          d=IS.da[NY-1]/1e6, nop=(IS.non_op[NY-1]||0)/1e6, n=IS.net[NY-1]/1e6;
-    const gross=rev-c, ebit=gross-s-d, net=ebit+nop;
-    new Chart(document.getElementById('c-bridge'),{type:'bar',
-      data:{labels:['Ingresos','(-) COGS','Margen Bruto','(-) SGA','(-) D&A','EBIT','(+/-) No Op.','Utilidad Neta'],
-        datasets:[{data:[rev,-c,gross,-s,-d,ebit,nop,n],
-          backgroundColor:[PALETTE.green,PALETTE.red,PALETTE.green+'AA',PALETTE.red+'AA',PALETTE.purple,PALETTE.blue+'AA',PALETTE.amber,PALETTE.green],
-          borderRadius:4}]},
-      options:{...chartDefaults,plugins:{legend:{display:false}},
-        scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-          y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 19: LIQUIDITY ──
-  if(document.getElementById('c-liq')){
-    const cr=YEARS.map((_,i)=>rt(BS.current_assets[i],BS.current_liab[i]));
-    const qr=YEARS.map((_,i)=>{const n=BS.cash[i]!=null&&BS.ar[i]!=null?BS.cash[i]+BS.ar[i]:null;return rt(n,BS.current_liab[i]);});
-    new Chart(document.getElementById('c-liq'),{type:'line',
-      data:{labels:yrLabel,datasets:[
-        {label:'Razón Corriente',data:cr,borderColor:PALETTE.blue,borderWidth:2,pointRadius:3,tension:.3},
-        {label:'Prueba Ácida',data:qr,borderColor:PALETTE.amber,borderWidth:2,pointRadius:3,tension:.3,borderDash:[5,3]},
-      ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:9}}},
-        y:{ticks:{callback:v=>v+'x'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 20: CCC (ratios page) ──
-  if(document.getElementById('c-ccc')){
-    const dso2=YEARS.map((_,i)=>BS.ar[i]&&IS.revenue[i]?BS.ar[i]/IS.revenue[i]*365:null);
-    const ccc2=YEARS.map((_,i)=>{
-      const d=BS.ar[i]&&IS.revenue[i]?BS.ar[i]/IS.revenue[i]*365:null;
-      const di=BS.inventory[i]&&IS.cogs[i]?BS.inventory[i]/IS.cogs[i]*365:null;
-      const dp=BS.ap[i]&&IS.cogs[i]?BS.ap[i]/IS.cogs[i]*365:null;
-      return d!=null&&di!=null&&dp!=null?d+di-dp:null;});
-    new Chart(document.getElementById('c-ccc'),{type:'line',
-      data:{labels:yrLabel,datasets:[
-        {label:'DSO',data:dso2,borderColor:PALETTE.blue,borderWidth:2,pointRadius:3,tension:.3},
-        {label:'CCC',data:ccc2,borderColor:PALETTE.red,borderWidth:2.5,pointRadius:4,tension:.3},
-      ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:9}}},
-        y:{ticks:{callback:v=>v+'d'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 21: LEVERAGE ──
-  if(document.getElementById('c-lev')){
-    const de=YEARS.map((_,i)=>BS.equity[i]&&BS.equity[i]>0?rt(BS.total_liab[i],BS.equity[i]):null);
-    const dae=YEARS.map((_,i)=>p(BS.total_liab[i],BS.total_assets[i]));
-    new Chart(document.getElementById('c-lev'),{type:'line',
-      data:{labels:yrLabel,datasets:[
-        {label:'Deuda/Patrimonio',data:de,borderColor:PALETTE.red,borderWidth:2.5,pointRadius:4,tension:.3},
-        {label:'Deuda/Activos %',data:dae,borderColor:PALETTE.amber,borderWidth:2,pointRadius:3,tension:.3,borderDash:[5,3],yAxisID:'y1'},
-      ]},options:{...chartDefaults,
-        scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:9}}},
-          y:{ticks:{callback:v=>v+'x'},grid:{color:'#f0ebe3'}},
-          y1:{position:'right',ticks:{callback:v=>v+'%'},grid:{drawOnChartArea:false}}}},
-    });
-  }
-
-  // ── Chart 22: PROJECTIONS ──
-  if(window._proj && document.getElementById('c-proj')){
-    const p=window._proj;
-    const allYrs=['2025','2026','2027','2028','2029','2030'];
-    new Chart(document.getElementById('c-proj'),{type:'bar',
-      data:{labels:allYrs,datasets:[
-        {label:'Bear (5%)',data:p.bearRev,backgroundColor:'rgba(139,26,26,0.4)',borderRadius:4},
-        {label:'Base (15%)',data:p.baseRev,backgroundColor:'rgba(27,42,71,0.7)',borderRadius:4},
-        {label:'Bull (25%)',data:p.bullRev,backgroundColor:'rgba(192,128,64,0.5)',borderRadius:4},
-        {type:'line',label:'EBITDA Base',data:p.baseEBITDA,borderColor:PALETTE.green,
-          backgroundColor:'transparent',borderWidth:2.5,pointRadius:5,tension:.3,yAxisID:'y1'},
-      ]},options:{...chartDefaults,
-        scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}},
-          y1:{position:'right',title:{display:true,text:'EBITDA (M)'},grid:{drawOnChartArea:false}}}},
-    });
-  }
-
-  // ── Chart 23: PROJ MARGINS ──
-  if(window._proj && document.getElementById('c-proj-margins')){
-    const p=window._proj;
-    const allYrs=['2025','2026','2027','2028','2029','2030'];
-    new Chart(document.getElementById('c-proj-margins'),{type:'line',
-      data:{labels:allYrs,datasets:[
-        {label:'Margen Bruto %',data:p.baseRev.map((_,i)=>(p.baseRev[i]>0?(p.baseRev[i]-[815.7,890.1,973.9,1095.9,1213.6,1342.0][i])/p.baseRev[i]*100:null)),borderColor:PALETTE.green,borderWidth:2,pointRadius:4,tension:.3},
-        {label:'Margen EBITDA %',data:p.baseRev.map((_,i)=>(p.baseRev[i]>0?p.baseEBITDA[i]/p.baseRev[i]*100:null)),borderColor:PALETTE.amber,borderWidth:2,pointRadius:4,tension:.3,borderDash:[5,3]},
-        {label:'Margen Neto %',data:p.baseRev.map((_,i)=>(p.baseRev[i]>0?p.baseNet[i]/p.baseRev[i]*100:null)),borderColor:PALETTE.blue,borderWidth:2,pointRadius:4,tension:.3,borderDash:[3,3]},
-      ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-        y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 24: PROJ FCF ──
-  if(window._proj && document.getElementById('c-proj-fcf')){
-    const p=window._proj;
-    const allYrs=['2025','2026','2027','2028','2029','2030'];
-    new Chart(document.getElementById('c-proj-fcf'),{type:'bar',
-      data:{labels:allYrs,datasets:[
-        {label:'FCF Estimado (M)',data:p.baseFCF,backgroundColor:p.baseFCF.map(v=>v>=0?PALETTE.green+'88':PALETTE.red+'88'),borderRadius:4},
-        {type:'line',label:'EBITDA (M)',data:p.baseEBITDA,borderColor:PALETTE.amber,borderWidth:2,pointRadius:4,tension:.3},
-      ]},options:{...chartDefaults,scales:{x:{grid:{color:'#f0ebe3'},ticks:{font:{size:10}}},
-        y:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}}}},
-    });
-  }
-
-  // ── Chart 25: FOOTBALL FIELD ──
-  if(window._val && document.getElementById('c-football')){
-    const v=window._val;
-    new Chart(document.getElementById('c-football'),{type:'bar',
-      data:{labels:v.labels,datasets:[
-        {label:'Piso',data:v.lo,backgroundColor:PALETTE.red+'88',borderRadius:4},
-        {label:'Base',data:v.base,backgroundColor:PALETTE.navy+'88',borderRadius:4},
-        {label:'Techo',data:v.hi,backgroundColor:PALETTE.green+'88',borderRadius:4},
-      ]},options:{...chartDefaults,indexAxis:'y',
-        scales:{x:{title:{display:true,text:'CLP M'},grid:{color:'#f0ebe3'}},y:{grid:{color:'#f0ebe3'}}}},
-    });
-  }
-}
-
-
-// ================================================================
-// EERR EXPANDABLE DETAIL DATA
-// Arrays: [2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]
-// null = no disponible  |  0 = confirmed zero
-// ================================================================
-const DET = {
-  // ── REVENUE ──────────────────────────────────────────────────
-  rev_ventas:  [6083284,47869974,94384973,159870969,190512838,360193462,207048063,null,651687649,934224952,914575491,1334431592],
-  rev_arriendo:[0,0,0,0,2000000,5642508,400000,null,0,0,0,0],
-  rev_otros:   [0,0,0,0,0,0,153382,null,389919,3166,282753,0],
-
-  // ── COGS ─────────────────────────────────────────────────────
-  cogs_directo:[4039428,30526846,40457526,16218473,113269918,250470045,139239421,null,379135740,454233982,560879129,815669725],
-  cogs_import: [0,1675058+368181,0,1648879,4949100+4690020,0,0,null,0,0,0,0],
-  cogs_transp: [0,0,0,0,0,167689,2412497+1092606+2302586,null,0,0,0,0],
-  cogs_otros:  [0,0,0,0,0,0,0,null,0,0,0,0],
-
-  // ── SGA: PERSONAL ─────────────────────────────────────────────
-  // Sueldos, honorarios, gratificaciones, aportes, bonos
-  sga_personal:[265000,null,13080401,22834355,32189943,72176017,54343199,null,79541107,129975712,171415827,null],
-  // sueldos y salarios (subset of personal)
-  sga_sueldos: [0,0,7686080,10844076,13657983,18499037,15766684,null,35243638,89577300,110828314,null],
-  sga_honora:  [265000,null,5394321,11990279,18531960,51593317,34119007,null,33177096,17035800,25012749,null],
-  sga_gratifc: [0,null,0,0,0,831668+1251995,3241230+1216278,null,6466216+430393+1281171+2942593,14372290+1766674+4971130+287738+1964780,18036865+716040+2469785+7099739+3303735+3948600,null],
-
-  // ── SGA: OCUPACION ────────────────────────────────────────────
-  // Arriendos, leasing op., básicos, telefonía, IT
-  sga_ocup:    [167550,91300,null,null,9808759,17964417,null,null,29914705,35547999,52502037,null],
-  sga_arriendo:[66240,91300,null,null,6292994,12690707,18563699,null,26000328,30507645,46375669,null],
-  sga_leasing: [0,0,0,0,0,0,0,null,7053324,6661663,8860414,null],
-  sga_basicos: [47200+54110,112689+253487,null,null,3515765,2153671+2333848+786191,1816103+874030+1164742+473823,null,2871041+344752+698584,4036637+365183+638534,5141657+369403+615308,null],
-  sga_comput:  [15882+48390,189072,null,null,0,0,1998937,null,10599711,14957447,18762221,null],
-
-  // ── SGA: LOGISTICA ────────────────────────────────────────────
-  // Gastos importación, fletes, bodegas, transporte
-  sga_logist:  [2164914,1675058+368181,null,null,4949100+4690020,0,0,null,16562690+12403686+3204675,9998107+5676380+5769903,3834819+9343539+2727349,null],
-
-  // ── SGA: COMERCIAL ────────────────────────────────────────────
-  // Publicidad, comercialización, traslados, ventas
-  sga_comerc:  [134885,79558+31765+45000,null,null,null,716807,null,null,3195668+481119+595880+2043824,3832477+7276683+5431697,2247368+2493228+15000571,null],
-
-  // ── SGA: ADMINISTRACIÓN ───────────────────────────────────────
-  // Asesoría, bancarios, patente, mantenciones, generales, CM, otros
-  sga_admin:   [845555,524713+272962+73868+660295+112689+231280+208418,null,null,3950153+5743960+387101+123941+570700+2037515,null,null,null,1420680+1848713+2023144+2554478+114971+503311+89687+654431,1213229+1786411+499221+2875060+2173418+70300+195800+262413+37088,7236465+6867639+1135785+4381920+729706+35697+81000+378659+92753+8837+526728+150000+971689+76370+258250,null],
-
-  // ── D&A ───────────────────────────────────────────────────────
-  da_deprec:   [377864,438546,485755,0,2750743,4776161,8860809,null,17038888,23081824,12900388,14999393],
-  da_amort:    [0,0,0,0,0,0,0,null,0,0,0,0],
-
-  // ── NO OPERACIONAL ────────────────────────────────────────────
-  nop_interes: [0,0,0,0,-4223754,0,0,null,0,0,-4223754,-3419311],
-  nop_fx:      [0,0,0,0,0,0,7039402,null,0,0,0,0],
-  nop_cm_gain: [0,0,0,0,0,0,309901,null,6340956,1916891,1266303,11080021],
-  nop_multas:  [0,0,0,0,-1135204,0,-832877,null,-114971,-499221,-18488862,-3580082],
-};
-
-// ── SUM HELPER ─────────────────────────────────────────────────
-const sumD = (...arrs) => arrs.reduce((acc,arr)=> {
-  if(!acc) return arr;
-  return acc.map((v,i)=>v==null||arr[i]==null?null:v+arr[i]);
+window.addEventListener('DOMContentLoaded',()=>{
+ restoreSidebar();
+ renderAll();
+ setTimeout(initCharts,180);
 });
-
-// ── ENHANCED buildEERR ─────────────────────────────────────────
-function buildEERR_OLD_DISABLED() {
-  const hdr = document.getElementById('eerr-hdr');
-  if(!hdr) return;
-  hdr.innerHTML = '<th>Concepto  (CLP M)  <small style="font-weight:400;opacity:.7">▶ = expandir detalle</small></th>'
-    + yrLabel.map(y=>`<th>${y}</th>`).join('');
-
-  const fmtClp = v => {
-    if(v===null) return '<span class="det-nd">N/D</span>';
-    if(v===0) return '<span style="color:#bbb">—</span>';
-    const m=v/1e6, s=Math.abs(m).toFixed(1)+'M';
-    return v<0?`<span class="neg">(${s})</span>`:s;
-  };
-  const fmtPct = (v,d=IS.revenue) => {
-    const pv=d.map((r,i)=>p(v[i],r));
-    return pv;
-  };
-
-  let uid=0;
-  const sections=[];
-
-  // ── helper: create expandable group of detail rows ──
-  function mkDetail(groupId, rows, bgCls) {
-    const gid = `grp-${groupId}-${uid++}`;
-    let html=`<tbody class="detail-group" id="${gid}">`;
-    rows.forEach(([label,data])=>{
-      const cells=data.map(v=>`<td>${fmtClp(v)}</td>`).join('');
-      html+=`<tr class="detail-row"><td>${label}</td>${cells}</tr>`;
-    });
-    html+=`</tbody>`;
-    return {html, gid};
-  }
-
-  // ── helper: create grouped section (Personal, Ocup, etc.) ──
-  function mkGroup(parentId, subgroups) {
-    const gid=`grp-main-${uid++}`;
-    let html=`<tbody class="detail-group" id="${gid}">`;
-    subgroups.forEach(([icon,label,cls,data,rowDetails])=>{
-      if(data===null) return;
-      const sumRow=data;
-      const cells=sumRow.map(v=>`<td>${fmtClp(v)}</td>`).join('');
-      const rowId=`sub-${uid++}`;
-      html+=`<tr class="grp-header ${cls}"><td>`;
-      if(rowDetails&&rowDetails.length){
-        html+=`<button class="grp-btn" onclick="toggleGroup('${rowId}',this)" style="font-size:9px">▶</button>`;
-      }
-      html+=`${icon} ${label}</td>${cells}</tr>`;
-      if(rowDetails&&rowDetails.length){
-        html+=`<tbody class="detail-group" id="${rowId}">`;
-        rowDetails.forEach(([dlabel,ddata])=>{
-          const dc=ddata.map(v=>`<td>${fmtClp(v)}</td>`).join('');
-          html+=`<tr class="detail-row"><td>${dlabel}</td>${dc}</tr>`;
-        });
-        html+=`</tbody>`;
-      }
-    });
-    html+=`</tbody>`;
-    return {html, gid};
-  }
-
-  function toggleGroup(id, btn) {
-    const el=document.getElementById(id);
-    if(!el) return;
-    const open=el.classList.toggle('open');
-    btn.textContent=open?'▼':'▶';
-    event.stopPropagation();
-  }
-  window.toggleGroup = toggleGroup;
-
-  let out='<tbody id="eerr-tbody">';
-
-  // ─ helper: section header row ─
-  const secRow=(lbl,bgCls='sec-row')=>`<tr class="${bgCls}"><td colspan="${NY+1}">${lbl}</td></tr>`;
-
-  // ─ helper: main summary row with expand button ─
-  function mainRow(cls, icon, label, data, gid, bold=false) {
-    const cells=data.map(v=>`<td>${fmtClp(v)}</td>`).join('');
-    const btn=gid?`<button class="exp-btn" onclick="toggleGroup('${gid}',this)">▶</button>`:'';
-    return `<tr class="${cls} row-expandable"><td>${btn}${icon} ${label}</td>${cells}</tr>`;
-  }
-
-  // ─ helper: pct row ─
-  function pctRow(label, nums, den) {
-    const cells=nums.map((v,i)=>{
-      const pv=p(v,den[i]);
-      return `<td>${fmtP(pv)}</td>`;
-    }).join('');
-    return `<tr class="sub-row"><td style="padding-left:20px">${label}</td>${cells}</tr>`;
-  }
-
-  // ═══════════════════════════════════════════
-  // I. INGRESOS
-  // ═══════════════════════════════════════════
-  out += secRow('  I.  INGRESOS DE EXPLOTACIÓN');
-  const revDetail = mkDetail('rev',[
-    ['Ventas del giro (clientes nacionales y exportación)',DET.rev_ventas],
-    ['Ingresos por arriendos y servicios',DET.rev_arriendo],
-    ['Reajuste IVA crédito / otros ingresos menores',DET.rev_otros],
-  ]);
-  out += revDetail.html;
-  out += mainRow('tot-row','📦','Ingresos por ventas del giro', IS.revenue, revDetail.gid, true);
-
-  // ═══════════════════════════════════════════
-  // II. COSTO DE VENTAS
-  // ═══════════════════════════════════════════
-  out += secRow('  II.  COSTO DE VENTAS');
-  const cogsArr = IS.cogs.map(v=>v==null?null:-v);
-  const cogsDetail = mkDetail('cogs',[
-    ['Costo directo de mercadería / café verde',DET.cogs_directo.map(v=>v==null?null:-v)],
-    ['Gastos y aranceles de importación',DET.cogs_import.map(v=>v==null?null:-v)],
-    ['Fletes y costos de transporte',DET.cogs_transp.map(v=>v==null?null:-v)],
-    ['Otros costos directos de explotación',DET.cogs_otros.map(v=>v==null?null:v)],
-  ]);
-  out += cogsDetail.html;
-  out += mainRow('tot-row','📦','(-) Costo de ventas', cogsArr, cogsDetail.gid, true);
-  out += `<tr class="hi-row"><td>MARGEN BRUTO</td>${IS.gross.map(v=>`<td>${fmtClp(v)}</td>`).join('')}</tr>`;
-  out += pctRow('% Margen Bruto', IS.gross, IS.revenue);
-
-  // ═══════════════════════════════════════════
-  // III. GASTOS OPERACIONALES
-  // ═══════════════════════════════════════════
-  out += secRow('  III.  GASTOS DE OPERACIÓN (SGA + D&A)');
-
-  // Build SGA grouped detail
-  const sgaGrps = mkGroup('sga',[
-    ['👥','Personal y Remuneraciones','grp-personal',
-      DET.sga_personal.map(v=>v==null?null:-v),
-      [['Sueldos y salarios',DET.sga_sueldos.map(v=>v==null?null:-v)],
-       ['Honorarios profesionales y consultores',DET.sga_honora.map(v=>v==null?null:-v)],
-       ['Gratificaciones, bonos y beneficios',DET.sga_gratifc.map(v=>v==null?null:-v)]]],
-    ['🏢','Ocupación e Infraestructura','grp-ocupacion',
-      DET.sga_ocup.map(v=>v==null?null:-v),
-      [['Arriendos de propiedades',DET.sga_arriendo.map(v=>v==null?null:-v)],
-       ['Leasing operativo',DET.sga_leasing.map(v=>v==null?null:-v)],
-       ['Electricidad, gas, agua y servicios básicos',DET.sga_basicos.map(v=>v==null?null:-v)],
-       ['Tecnología y sistemas computacionales',DET.sga_comput.map(v=>v==null?null:-v)]]],
-    ['🚢','Logística y Operaciones','grp-logistica',
-      DET.sga_logist.map(v=>v==null?null:-v),[
-       ['Gastos e importación (aranceles, aduanas)',DET.sga_logist.map(v=>v==null?null:-Math.round(v*0.6))]]],
-    ['📢','Comercial y Marketing','grp-comercial',
-      DET.sga_comerc.map(v=>v==null?null:-v),[
-       ['Publicidad, marketing y comercialización',DET.sga_comerc.map(v=>v==null?null:-v)]]],
-    ['⚙️','Administración, Legal y Otros','grp-admin',
-      DET.sga_admin.map(v=>v==null?null:-v),[
-       ['Asesoría contable, legal y otras asesorías',DET.sga_admin.map(v=>v==null?null:-Math.round(v*0.4))],
-       ['Gastos bancarios y comisiones financieras',DET.sga_admin.map(v=>v==null?null:-Math.round(v*0.3))],
-       ['Patente comercial, mantenciones y otros',DET.sga_admin.map(v=>v==null?null:-Math.round(v*0.3))]]],
-  ]);
-
-  // Total SGA excl D&A
-  const sgaTot = IS.sga.map(v=>v==null?null:-v);
-  out += sgaGrps.html;
-  out += mainRow('','👥','(-) Gastos Adm. y Ventas (Personal, Ocupación, Logística, Comercial, Admin)', sgaTot, sgaGrps.gid);
-
-  // D&A
-  const daDetail = mkDetail('da',[
-    ['Depreciación de PP&E (activos fijos)',DET.da_deprec.map(v=>v==null?null:-v)],
-    ['Amortización de intangibles',DET.da_amort.map(v=>v==null?null:v)],
-  ]);
-  const daTot = IS.da.map(v=>v==null?null:-v);
-  out += daDetail.html;
-  out += mainRow('','📉','(-) Depreciación y Amortización  (D&A)', daTot, daDetail.gid);
-
-  // Opex total
-  const opexTot = IS.sga.map((v,i)=>v==null||IS.da[i]==null?null:-(v+IS.da[i]));
-  out += `<tr class="tot-row"><td>TOTAL GASTOS OPERACIONALES</td>${opexTot.map(v=>`<td>${fmtClp(v)}</td>`).join('')}</tr>`;
-
-  // EBIT, EBITDA
-  out += `<tr class="hi-row" style="background:var(--blue-lt)"><td>RESULTADO OPERACIONAL  (EBIT)</td>${IS.ebit.map(v=>`<td>${fmtClp(v)}</td>`).join('')}</tr>`;
-  out += pctRow('% Margen EBIT', IS.ebit, IS.revenue);
-  out += `<tr class="hi-row" style="background:var(--amber-lt)"><td>EBITDA  =  EBIT + D&A</td>${IS.ebitda.map(v=>`<td>${fmtClp(v)}</td>`).join('')}</tr>`;
-  out += pctRow('% Margen EBITDA', IS.ebitda, IS.revenue);
-
-  // ═══════════════════════════════════════════
-  // IV. RESULTADO NO OPERACIONAL
-  // ═══════════════════════════════════════════
-  out += secRow('  IV.  RESULTADO NO OPERACIONAL');
-  const nopDetail = mkDetail('nop',[
-    ['Gastos financieros / intereses bancarios',DET.nop_interes],
-    ['Diferencia de cambio (FX gains/losses)',DET.nop_fx],
-    ['Corrección monetaria y otros ajustes',DET.nop_cm_gain],
-    ['Intereses, multas fiscales y otros gastos',DET.nop_multas],
-  ]);
-  out += nopDetail.html;
-  out += mainRow('','📊','(+/-) Resultado No Operacional Neto', IS.non_op, nopDetail.gid);
-
-  // EBT, TAX, NET
-  out += `<tr class="tot-row" style="background:var(--navy);color:#fff"><td>RESULTADO ANTES DE IMPUESTOS  (EBT)</td>${IS.ebt.map(v=>`<td style="color:#fff">${fmtClp(v)}</td>`).join('')}</tr>`;
-  const taxArr=IS.tax.map(v=>v==null?null:-v);
-  out += `<tr><td style="padding-left:18px">(-) Impuesto a la Renta</td>${taxArr.map(v=>`<td>${fmtClp(v)}</td>`).join('')}</tr>`;
-
-  out += `<tr class="net-row"><td>★  UTILIDAD (PÉRDIDA) DEL EJERCICIO</td>${IS.net.map(v=>`<td style="${v!=null&&v<0?'color:#f88':'color:#7fff9e'}">${fmtClp(v)}</td>`).join('')}</tr>`;
-  out += pctRow('% Margen Neto', IS.net, IS.revenue);
-  out += '</tbody>';
-
-  // ─ Crecimiento YoY ──────────────────────────────────────────
-  out += `<tbody><tr class="sec-row"><td colspan="${NY+1}">  V.  CRECIMIENTO INTERANUAL (YoY %)</td></tr>`;
-  [['Crecimiento Ingresos',IS.revenue],['Crecimiento EBITDA',IS.ebitda],
-   ['Crecimiento EBIT',IS.ebit],['Crecimiento Utilidad Neta',IS.net]].forEach(([lbl,arr])=>{
-    const cells=arr.map((v,i)=>{
-      if(i===0||v==null||arr[i-1]==null) return '<td><span class="det-nd">—</span></td>';
-      const g=p(v-arr[i-1],Math.abs(arr[i-1]));
-      return `<td class="${g>0?'pos':g<0?'neg':''}">${fmtP(g)}</td>`;
-    }).join('');
-    out+=`<tr class="sub-row"><td style="padding-left:18px">${lbl} YoY %</td>${cells}</tr>`;
-  });
-  out+='</tbody>';
-
-  document.getElementById('eerr-body').outerHTML = out;
-
-  // ─ Legend below table ─
-  const tblWrap = document.querySelector('.tbl-wrap');
-  if(tblWrap && !document.getElementById('eerr-legend')) {
-    const leg = document.createElement('div');
-    leg.id='eerr-legend';
-    leg.className='exp-legend';
-    leg.innerHTML=`
-      <strong style="color:var(--dark)">▶ Click para expandir cada sección · Subcategorías disponibles:</strong>
-      <span><span class="exp-dot" style="background:#AED6F1"></span>Ingresos</span>
-      <span><span class="exp-dot" style="background:#F1948A"></span>COGS</span>
-      <span><span class="exp-dot" style="background:#1A3A6B"></span>👥 Personal</span>
-      <span><span class="exp-dot" style="background:#0E6655"></span>🏢 Ocupación</span>
-      <span><span class="exp-dot" style="background:#6C3483"></span>🚢 Logística</span>
-      <span><span class="exp-dot" style="background:#806000"></span>📢 Comercial</span>
-      <span><span class="exp-dot" style="background:#566573"></span>⚙️ Admin</span>
-      <span><span class="exp-dot" style="background:#7B241C"></span>No Operacional</span>
-    `;
-    tblWrap.insertBefore(leg, tblWrap.querySelector('table'));
-  }
-
-  // ─ Rebuild margin table ─
-  const mhdr=document.getElementById('margin-hdr');
-  if(mhdr){
-    mhdr.innerHTML='<th>Indicador</th>'+yrLabel.map(y=>`<th>${y}</th>`).join('');
-    const mb=document.getElementById('margin-body');
-    const mrows=[
-      {l:'Margen Bruto %',fn:i=>p(IS.gross[i],IS.revenue[i])},
-      {l:'Margen EBITDA %',fn:i=>p(IS.ebitda[i],IS.revenue[i])},
-      {l:'Margen EBIT %',fn:i=>p(IS.ebit[i],IS.revenue[i])},
-      {l:'Margen Neto %',fn:i=>p(IS.net[i],IS.revenue[i])},
-      {l:'COGS / Ingresos %',fn:i=>p(IS.cogs[i],IS.revenue[i])},
-      {l:'SGA / Ingresos %',fn:i=>p(IS.sga[i],IS.revenue[i])},
-      {l:'D&A / Ingresos %',fn:i=>p(IS.da[i],IS.revenue[i])},
-    ];
-    mb.innerHTML=mrows.map(r=>{
-      const cells=YEARS.map((_,i)=>{
-        const v=r.fn(i);
-        const cls=v!=null&&v<0?'neg':v!=null&&v>15?'pos':'';
-        return `<td class="${cls}">${fmtP(v)}</td>`;
-      }).join('');
-      return `<tr><td>${r.l}</td>${cells}</tr>`;
-    }).join('');
-  }
-}
-
-// ── INIT ──────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', ()=>{
-  buildKPI();
-  buildTraffic();
-  buildEERR();
-  buildBalance();
-  buildCashFlow();
-  buildRatios();
-  buildProjections();
-  buildValuation();
-  setTimeout(initCharts, 100);
-});
+window.addEventListener('resize',()=>setTimeout(initCharts,120));
 </script>
 </body>
 </html>
